@@ -17,66 +17,78 @@ export const authOptions: NextAuthOptions = {
                     throw new Error("يرجى إدخال بيانات الدخول");
                 }
 
-                // ── Rate Limiting: max 5 login attempts per identifier per minute ──
-                const identifier = `login:${credentials.login}`;
-                const windowStart = new Date(Date.now() - 60 * 1000);
+                try {
+                    // ── Rate Limiting: max 5 login attempts per identifier per minute ──
+                    const identifier = `login:${credentials.login}`;
+                    const windowStart = new Date(Date.now() - 60 * 1000);
 
-                const attemptRecord = await prisma.loginAttempt.findFirst({
-                    where: { identifier, firstAt: { gte: windowStart } },
-                });
+                    try {
+                        const attemptRecord = await prisma.loginAttempt.findFirst({
+                            where: { identifier, firstAt: { gte: windowStart } },
+                        });
 
-                if (attemptRecord) {
-                    if (attemptRecord.attempts >= 5) {
-                        throw new Error("RATE_LIMITED");
+                        if (attemptRecord) {
+                            if (attemptRecord.attempts >= 5) {
+                                throw new Error("RATE_LIMITED");
+                            }
+                            await prisma.loginAttempt.update({
+                                where: { id: attemptRecord.id },
+                                data: { attempts: { increment: 1 } },
+                            });
+                        } else {
+                            await prisma.loginAttempt.create({
+                                data: { identifier },
+                            });
+                        }
+                    } catch (rateLimitErr: any) {
+                        // Re-throw RATE_LIMITED intentionally; swallow DB connectivity errors
+                        if (rateLimitErr.message === "RATE_LIMITED") throw rateLimitErr;
+                        console.error("[Auth] Rate-limit DB error (non-fatal):", rateLimitErr.message);
                     }
-                    await prisma.loginAttempt.update({
-                        where: { id: attemptRecord.id },
-                        data: { attempts: { increment: 1 } },
+
+                    const user = await prisma.user.findFirst({
+                        where: {
+                            OR: [
+                                { nationalId: credentials.login },
+                                { email: credentials.login },
+                            ],
+                        },
                     });
-                } else {
-                    await prisma.loginAttempt.create({
-                        data: { identifier },
-                    });
+
+                    if (!user) {
+                        throw new Error("بيانات الدخول غير صحيحة");
+                    }
+
+                    const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
+                    if (!isPasswordValid) {
+                        throw new Error("بيانات الدخول غير صحيحة");
+                    }
+
+                    if (user.status === "PENDING")   throw new Error("PENDING");
+                    if (user.status === "REJECTED")   throw new Error("REJECTED");
+                    if (user.status === "SUSPENDED")  throw new Error("SUSPENDED");
+
+                    return {
+                        id: user.id,
+                        name: user.fullName,
+                        email: user.email,
+                        role: user.role,
+                        status: user.status,
+                        nationalId: user.nationalId,
+                    };
+                } catch (err: any) {
+                    // Only re-throw known, user-friendly errors
+                    const known = [
+                        "يرجى إدخال بيانات الدخول",
+                        "بيانات الدخول غير صحيحة",
+                        "RATE_LIMITED", "PENDING", "REJECTED", "SUSPENDED",
+                    ];
+                    if (known.includes(err.message)) throw err;
+
+                    // Unknown / DB errors: log server-side, show generic message
+                    console.error("[Auth] Unexpected error:", err.message);
+                    throw new Error("خدمة غير متاحة مؤقتاً، يرجى المحاولة لاحقاً");
                 }
-
-                const user = await prisma.user.findFirst({
-                    where: {
-                        OR: [
-                            { nationalId: credentials.login },
-                            { email: credentials.login },
-                        ],
-                    },
-                });
-
-                if (!user) {
-                    throw new Error("بيانات الدخول غير صحيحة");
-                }
-
-                const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
-                if (!isPasswordValid) {
-                    throw new Error("بيانات الدخول غير صحيحة");
-                }
-
-                if (user.status === "PENDING") {
-                    throw new Error("PENDING");
-                }
-
-                if (user.status === "REJECTED") {
-                    throw new Error("REJECTED");
-                }
-
-                if (user.status === "SUSPENDED") {
-                    throw new Error("SUSPENDED");
-                }
-
-                return {
-                    id: user.id,
-                    name: user.fullName,
-                    email: user.email,
-                    role: user.role,
-                    status: user.status,
-                    nationalId: user.nationalId,
-                };
             },
         }),
     ],
