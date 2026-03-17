@@ -4,7 +4,6 @@
    Colors extracted from official DSIT logo
    ═══════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 /* ─── CSS Custom Properties ─────────────────────────── */
 :root {
@@ -68,7 +67,7 @@
   --gray-900: #111827;
 
   /* Typography */
-  --font-family: 'IBM Plex Sans Arabic', 'Inter', sans-serif;
+  --font-family: var(--font-ibm-plex), sans-serif;
   --font-family-mono: 'Inter', monospace;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
