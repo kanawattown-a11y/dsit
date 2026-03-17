@@ -22,20 +22,22 @@ const adminNavItems = [
         ],
     },
     {
-        section: "المخصصات",
+        section: "المخصصات والمخزون",
         items: [
             { href: "/admin/allocations", label: "المواد والمخصصات", icon: "package" },
             { href: "/admin/periods", label: "دورات التوزيع", icon: "calendar" },
             { href: "/admin/centers", label: "مراكز التوزيع", icon: "building" },
+            { href: "/admin/inventory", label: "إدارة المخزون", icon: "database" },
             { href: "/admin/transactions", label: "المعاملات", icon: "receipt" },
         ],
     },
     {
-        section: "الأدوات",
+        section: "الأدوات والرقابة",
         items: [
             { href: "/admin/notifications", label: "الإشعارات", icon: "bell" },
-            { href: "/admin/reports", label: "التقارير", icon: "chart" },
+            { href: "/admin/reports", label: "الشكاوى والضبوط", icon: "chart" },
             { href: "/admin/audit-log", label: "سجل التدقيق", icon: "shield" },
+            { href: "/admin/settings", label: "إعدادات النظام", icon: "settings" },
         ],
     },
 ];
@@ -113,6 +115,19 @@ function getIcon(name: string) {
         shield: (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+        ),
+        database: (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <ellipse cx="12" cy="5" rx="9" ry="3" />
+                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+            </svg>
+        ),
+        settings: (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
             </svg>
         ),
         calendar: (

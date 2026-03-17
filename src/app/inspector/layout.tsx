@@ -7,8 +7,9 @@ import React, { useState } from "react";
 
 const inspectorNavItems = [
     { href: "/inspector", label: "الرئيسية", icon: "home" },
-    { href: "/inspector/centers", label: "المراكز", icon: "building" },
-    { href: "/inspector/reports", label: "التقارير", icon: "report" },
+    { href: "/inspector/centers", label: "المراكز الرقابية", icon: "building" },
+    { href: "/inspector/violations", label: "تنظيم الضبوط", icon: "shield" },
+    { href: "/inspector/reports", label: "التقارير المرفوعة", icon: "report" },
 ];
 
 function getIcon(name: string) {
@@ -16,6 +17,7 @@ function getIcon(name: string) {
         home: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>,
         building: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="4" y="2" width="16" height="20" rx="2" ry="2" /><path d="M9 22v-4h6v4" /><line x1="8" y1="6" x2="10" y2="6" /><line x1="14" y1="6" x2="16" y2="6" /></svg>,
         report: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg>,
+        shield: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>,
     };
     return icons[name] || null;
 }
