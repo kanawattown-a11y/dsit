@@ -184,7 +184,7 @@ function ViolationsContent() {
                             <div className="form-group">
                                 <label className="form-label">تفاصيل الضبط أو الشكوى *</label>
                                 <textarea 
-                                    className="input-field" 
+                                    className="form-input" 
                                     required 
                                     rows={4} 
                                     placeholder="اكتب تفاصيل المخالفة (مثال: تلاعب بالوزن، بيع خارج المنصة، جودة سيئة...)"
@@ -197,7 +197,7 @@ function ViolationsContent() {
                                 <label className="form-label">الغرامة المقترحة أو المسجلة (ل.س) - اختياري</label>
                                 <input 
                                     type="number" 
-                                    className="input-field" 
+                                    className="form-input" 
                                     placeholder="مثال: 500000"
                                     value={formData.fineAmount}
                                     onChange={(e) => setFormData({...formData, fineAmount: e.target.value})}

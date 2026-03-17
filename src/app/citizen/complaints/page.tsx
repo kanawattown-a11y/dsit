@@ -122,7 +122,7 @@ export default function CitizenComplaintsPage() {
                             <label className="form-label">موضوع الشكوى *</label>
                             <input 
                                 type="text" 
-                                className="input-field" 
+                                className="form-input" 
                                 required 
                                 placeholder="مثال: الخبز غير ناضج، وزن الغاز ناقص..."
                                 value={formData.subject}
@@ -145,7 +145,7 @@ export default function CitizenComplaintsPage() {
                         <div className="form-group">
                             <label className="form-label">تفاصيل المشكلة بدقة *</label>
                             <textarea 
-                                className="input-field" 
+                                className="form-input" 
                                 required 
                                 rows={5}
                                 placeholder="يرجى كتابة كافة تفاصيل الشكوى ليتمكن المفتش من متابعتها..."
