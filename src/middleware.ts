@@ -7,7 +7,15 @@ export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     // Public routes
-    const publicRoutes = ["/auth/login", "/auth/register", "/auth/forgot-password", "/auth/reset-password", "/api/auth"];
+    const publicRoutes = [
+        "/auth/login",
+        "/auth/register",
+        "/auth/forgot-password",
+        "/auth/reset-password",
+        "/api/auth",
+        "/api/auth/register",  // registration API
+        "/api/upload",         // image upload during registration (unauthenticated)
+    ];
     const isPublicRoute = pathname === "/" || publicRoutes.some((route) => pathname.startsWith(route));
 
     // If not authenticated and trying to access protected route
@@ -69,6 +77,6 @@ function getDashboardUrl(role: string): string {
 
 export const config = {
     matcher: [
-        "/((?!_next/static|_next/image|favicon.ico|logo|sw.js|api/auth).*)",
+        "/((?!_next/static|_next/image|favicon.ico|logo|sw.js|firebase-messaging-sw.js|api/auth).*)",
     ],
 };
