@@ -17,7 +17,7 @@ async function sendFCMMessage(tokens: string[], payload: NotificationPayload) {
 
     if (tokens.length === 0) return { successCount: 0, failureCount: 0, invalidTokens: [] };
 
-    const message: admin.messaging.MulticastMessage = {
+    const message = {
         tokens,
         notification: {
             title: payload.title,
