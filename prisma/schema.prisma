@@ -1,0 +1,397 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+  INSPECTOR
+  DISTRIBUTOR
+}
+
+enum UserStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+enum CenterType {
+  BAKERY
+  GAS_STATION
+  SUPPLY_CENTER
+  FUEL_STATION
+}
+
+enum AllocationType {
+  FAMILY
+  INDIVIDUAL
+}
+
+enum AllocationPeriodStatus {
+  ACTIVE
+  UPCOMING
+  CLOSED
+}
+
+enum FuelType {
+  GASOLINE
+  DIESEL
+  NONE
+}
+
+enum InspectionStatus {
+  COMPLIANT
+  VIOLATION
+  WARNING
+}
+
+enum NotificationType {
+  SYSTEM
+  ALLOCATION
+  MANUAL
+  INSPECTION
+}
+
+enum FamilyBookStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ─── Users ────────────────────────────────────────────────────
+
+model User {
+  id          String     @id @default(cuid())
+  nationalId  String     @unique
+  fullName    String
+  email       String?    @unique
+  phone       String?
+  password    String
+  role        UserRole   @default(USER)
+  status      UserStatus @default(PENDING)
+  avatarUrl   String?
+  idPhotoFront String?   // Added for ID verification
+  idPhotoBack  String?   // Added for ID verification
+  selfiePhoto  String? // صورة شخصية (سيلفي) للتحقق من الهوية
+  region      String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relations
+  headOfFamilyBook    FamilyBook?           @relation("HeadOfFamily")
+  vehicleRegistrations VehicleRegistration[]
+  processedTransactions Transaction[]       @relation("ProcessedBy")
+  notifications       Notification[]        @relation("ReceivedBy")
+  sentNotifications   Notification[]        @relation("SentBy")
+  pushSubscriptions   PushSubscription[]
+  auditLogs           AuditLog[]
+  inspectionReports   InspectionReport[]    @relation("InspectorReports")
+  distributorCenterId String?
+  distributorCenter   DistributionCenter?   @relation("CenterDistributor", fields: [distributorCenterId], references: [id])
+  inspectorCenters    DistributionCenter[]  @relation("CenterInspector")
+  allocations         Allocation[]
+  passwordResetTokens PasswordResetToken[]
+
+  // Performance indexes for 400K+ users
+  @@index([nationalId])
+  @@index([role])
+  @@index([status])
+  @@index([region])
+  @@index([fullName])
+  @@index([createdAt])
+  @@index([role, status])                    // Composite: filter by role+status
+  @@index([status, createdAt])               // Composite: pending users sorted by date
+  @@index([distributorCenterId])             // FK index for distributor lookups
+}
+
+// ─── Family Book ──────────────────────────────────────────────
+
+model FamilyBook {
+  id              String           @id @default(cuid())
+  bookNumber      String           @unique
+  headOfFamilyId  String           @unique
+  headOfFamily    User             @relation("HeadOfFamily", fields: [headOfFamilyId], references: [id])
+  region          String?
+  address         String?
+  documentPhotos  String[]         // Added for verification
+  status          FamilyBookStatus @default(PENDING) // Verification status
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  members         FamilyMember[]
+  allocations     Allocation[]
+
+  @@index([bookNumber])
+  @@index([region])
+}
+
+model FamilyMember {
+  id            String     @id @default(cuid())
+  fullName      String
+  nationalId    String?
+  birthDate     DateTime?
+  relationship  String
+  personalPhoto String? // صورة شخصية لفرد العائلة (اختياري)
+  familyBookId  String
+  familyBook    FamilyBook @relation(fields: [familyBookId], references: [id], onDelete: Cascade)
+  createdAt     DateTime   @default(now())
+
+  individualAllocations Allocation[] @relation("MemberAllocations")
+
+  @@index([familyBookId])
+  @@index([nationalId])
+}
+
+// ─── Allocations ──────────────────────────────────────────────
+
+model AllocationCategory {
+  id             String         @id @default(cuid())
+  name           String
+  nameAr         String
+  type           AllocationType
+  unit           String         // kg, liter, piece, loaf
+  baseQuota      Float          // base quota per period
+  quotaPerPerson Float?         // additional per person if FAMILY type
+  icon           String?
+  isActive       Boolean        @default(true)
+  description    String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  periods        AllocationPeriod[]
+
+  @@index([isActive])
+}
+
+model AllocationPeriod {
+  id          String                 @id @default(cuid())
+  categoryId  String
+  category    AllocationCategory     @relation(fields: [categoryId], references: [id])
+  name        String                 // e.g. "March 2026"
+  startDate   DateTime
+  endDate     DateTime
+  status      AllocationPeriodStatus @default(UPCOMING)
+  createdAt   DateTime               @default(now())
+
+  allocations Allocation[]
+
+  @@index([status])
+  @@index([categoryId])
+  @@index([status, startDate])       // Composite: active periods by date
+}
+
+model Allocation {
+  id              String           @id @default(cuid())
+  periodId        String
+  period          AllocationPeriod @relation(fields: [periodId], references: [id])
+  userId          String
+  user            User             @relation(fields: [userId], references: [id])
+  familyBookId    String?
+  familyBook      FamilyBook?      @relation(fields: [familyBookId], references: [id])
+  memberId        String?
+  member          FamilyMember?    @relation("MemberAllocations", fields: [memberId], references: [id])
+  totalQuota      Float
+  remainingQuota  Float
+  isActive        Boolean          @default(true)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  transactions    Transaction[]
+
+  @@index([userId])
+  @@index([familyBookId])
+  @@index([periodId])
+  @@index([isActive])
+  @@index([userId, periodId])        // Composite: user's allocations in a period
+  @@index([userId, isActive])        // Composite: user's active allocations
+}
+
+// ─── Distribution Centers ─────────────────────────────────────
+
+model DistributionCenter {
+  id             String      @id @default(cuid())
+  name           String
+  type           CenterType
+  address        String?
+  lat            Float?
+  lng            Float?
+  phone          String?
+  region         String?
+  isActive       Boolean     @default(true)
+  distributors   User[]      @relation("CenterDistributor")
+  inspectorId    String?
+  inspector      User?       @relation("CenterInspector", fields: [inspectorId], references: [id])
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  transactions       Transaction[]
+  inspectionReports  InspectionReport[]
+
+  @@index([type])
+  @@index([region])
+  @@index([isActive])
+  @@index([inspectorId])
+}
+
+// ─── Transactions ─────────────────────────────────────────────
+
+model Transaction {
+  id            String             @id @default(cuid())
+  allocationId  String
+  allocation    Allocation         @relation(fields: [allocationId], references: [id])
+  centerId      String
+  center        DistributionCenter @relation(fields: [centerId], references: [id])
+  processedById String
+  processedBy   User               @relation("ProcessedBy", fields: [processedById], references: [id])
+  quantity      Float
+  qrTokenUsed   String?
+  notes         String?
+  createdAt     DateTime           @default(now())
+
+  @@index([allocationId])
+  @@index([centerId])
+  @@index([processedById])
+  @@index([createdAt])
+  @@index([centerId, createdAt])     // Composite: center's transactions by date
+  @@index([processedById, createdAt]) // Composite: distributor's transactions by date
+}
+
+// ─── Vehicles ─────────────────────────────────────────────────
+
+model VehicleRegistration {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plateNumber String
+  vehicleType String   // sedan, SUV, truck, motorcycle
+  fuelType    FuelType @default(GASOLINE)
+  engineSize  Float?   // in liters
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([plateNumber])
+  @@index([createdAt])
+}
+
+// ─── Notifications ────────────────────────────────────────────
+
+model Notification {
+  id          String           @id @default(cuid())
+  title       String
+  body        String
+  type        NotificationType @default(SYSTEM)
+  targetRole  UserRole?
+  targetUserId String?
+  targetUser  User?            @relation("ReceivedBy", fields: [targetUserId], references: [id])
+  isRead      Boolean          @default(false)
+  sentById    String?
+  sentBy      User?            @relation("SentBy", fields: [sentById], references: [id])
+  createdAt   DateTime         @default(now())
+
+  @@index([targetUserId])
+  @@index([targetRole])
+  @@index([isRead])
+  @@index([createdAt])
+  @@index([targetUserId, isRead])    // Composite: user's unread notifications
+}
+
+// ─── Web Push Subscriptions ───────────────────────────────────
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+// ─── Audit & Inspection ───────────────────────────────────────
+
+model AuditLog {
+  id           String   @id @default(cuid())
+  action       String
+  entity       String
+  entityId     String?
+  performedById String
+  performedBy  User     @relation(fields: [performedById], references: [id])
+  details      Json?
+  ipAddress    String?
+  createdAt    DateTime @default(now())
+
+  @@index([entity])
+  @@index([performedById])
+  @@index([createdAt])
+  @@index([action, createdAt])       // Composite: filter by action type
+  @@index([entity, createdAt])       // Composite: filter by entity type
+}
+
+model InspectionReport {
+  id          String             @id @default(cuid())
+  inspectorId String
+  inspector   User               @relation("InspectorReports", fields: [inspectorId], references: [id])
+  centerId    String
+  center      DistributionCenter @relation(fields: [centerId], references: [id])
+  findings    String
+  status      InspectionStatus
+  attachments String[]           // S3 URLs
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@index([inspectorId])
+  @@index([centerId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ─── Security ─────────────────────────────────────────────────
+
+// Tracks used QR nonces to prevent replay attacks
+model UsedQRNonce {
+  id        String   @id @default(cuid())
+  nonce     String   @unique
+  userId    String
+  usedAt    DateTime @default(now())
+  expiresAt DateTime
+
+  @@index([nonce])
+  @@index([expiresAt])
+}
+
+// For password reset emails
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// For in-memory rate limiting (login attempts tracking)
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  identifier String  // IP or nationalId
+  attempts  Int      @default(1)
+  firstAt   DateTime @default(now())
+  blockedUntil DateTime?
+
+  @@index([identifier])
+  @@index([blockedUntil])
+}

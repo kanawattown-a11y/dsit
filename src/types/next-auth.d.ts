@@ -1,0 +1,21 @@
+import { DefaultSession } from "next-auth";
+
+declare module "next-auth" {
+    interface Session {
+        user: {
+            id: string;
+            role: "ADMIN" | "USER" | "INSPECTOR" | "DISTRIBUTOR";
+            status: "PENDING" | "APPROVED" | "REJECTED" | "SUSPENDED";
+            nationalId: string;
+        } & DefaultSession["user"];
+    }
+}
+
+declare module "next-auth/jwt" {
+    interface JWT {
+        id: string;
+        role: "ADMIN" | "USER" | "INSPECTOR" | "DISTRIBUTOR";
+        status: "PENDING" | "APPROVED" | "REJECTED" | "SUSPENDED";
+        nationalId: string;
+    }
+}
