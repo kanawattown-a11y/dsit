@@ -1,15 +1,6 @@
-import webpush from "web-push";
+import { fcmAdmin } from "@/lib/firebase-admin";
 import prisma from "@/lib/prisma";
 import { UserRole } from "@prisma/client";
-
-// Configure VAPID
-if (process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
-    webpush.setVapidDetails(
-        process.env.VAPID_EMAIL || "mailto:admin@dsit.gov.sy",
-        process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-        process.env.VAPID_PRIVATE_KEY
-    );
-}
 
 interface NotificationPayload {
     title: string;
@@ -18,101 +9,105 @@ interface NotificationPayload {
     url?: string;
 }
 
+async function sendFCMMessage(tokens: string[], payload: NotificationPayload) {
+    if (!fcmAdmin) {
+        console.warn("[FCM] Firebase Admin not initialised. Skipping.");
+        return { successCount: 0, failureCount: 0, invalidTokens: [] };
+    }
+
+    if (tokens.length === 0) return { successCount: 0, failureCount: 0, invalidTokens: [] };
+
+    const message: admin.messaging.MulticastMessage = {
+        tokens,
+        notification: {
+            title: payload.title,
+            body: payload.body,
+        },
+        webpush: {
+            notification: {
+                icon: payload.icon || "/logo.jpeg",
+                dir: "rtl",
+                lang: "ar",
+                vibrate: [200, 100, 200],
+            },
+            fcmOptions: {
+                link: payload.url || "/",
+            },
+        },
+        data: {
+            url: payload.url || "/",
+        },
+    };
+
+    // FCM sendEachForMulticast for batches ≤500
+    const invalidTokens: string[] = [];
+    let successCount = 0;
+    let failureCount = 0;
+
+    const BATCH = 500;
+    for (let i = 0; i < tokens.length; i += BATCH) {
+        const batch = tokens.slice(i, i + BATCH);
+        const batchMessage = { ...message, tokens: batch };
+        const response = await fcmAdmin!.sendEachForMulticast(batchMessage as any);
+
+        response.responses.forEach((r, idx) => {
+            if (r.success) {
+                successCount++;
+            } else {
+                failureCount++;
+                const code = r.error?.code;
+                if (
+                    code === "messaging/registration-token-not-registered" ||
+                    code === "messaging/invalid-registration-token"
+                ) {
+                    invalidTokens.push(batch[idx]);
+                }
+            }
+        });
+    }
+
+    return { successCount, failureCount, invalidTokens };
+}
+
+async function cleanupInvalidTokens(invalidTokens: string[]) {
+    if (invalidTokens.length > 0) {
+        await prisma.pushSubscription.deleteMany({
+            where: { fcmToken: { in: invalidTokens } },
+        });
+    }
+}
+
 /**
- * Send push notification to a specific user
+ * Send FCM notification to a specific user (all their devices)
  */
 export async function sendPushToUser(userId: string, payload: NotificationPayload) {
-    const subscriptions = await prisma.pushSubscription.findMany({
-        where: { userId },
-    });
-
-    const results = await Promise.allSettled(
-        subscriptions.map((sub) =>
-            webpush.sendNotification(
-                {
-                    endpoint: sub.endpoint,
-                    keys: { p256dh: sub.p256dh, auth: sub.auth },
-                },
-                JSON.stringify(payload)
-            )
-        )
-    );
-
-    // Clean up invalid subscriptions
-    const failed = results
-        .map((r, i) => (r.status === "rejected" ? subscriptions[i].id : null))
-        .filter(Boolean);
-
-    if (failed.length > 0) {
-        await prisma.pushSubscription.deleteMany({
-            where: { id: { in: failed as string[] } },
-        });
-    }
+    const subs = await prisma.pushSubscription.findMany({ where: { userId } });
+    const tokens = subs.map((s) => s.fcmToken);
+    const { invalidTokens } = await sendFCMMessage(tokens, payload);
+    await cleanupInvalidTokens(invalidTokens);
 }
 
 /**
- * Send push notification to all users with a specific role
+ * Send FCM notification to all users with a specific role
  */
 export async function sendPushToRole(role: UserRole, payload: NotificationPayload) {
-    const subscriptions = await prisma.pushSubscription.findMany({
+    const subs = await prisma.pushSubscription.findMany({
         where: { user: { role, status: "APPROVED" } },
-        include: { user: { select: { id: true } } },
     });
-
-    const results = await Promise.allSettled(
-        subscriptions.map((sub) =>
-            webpush.sendNotification(
-                {
-                    endpoint: sub.endpoint,
-                    keys: { p256dh: sub.p256dh, auth: sub.auth },
-                },
-                JSON.stringify(payload)
-            )
-        )
-    );
-
-    const failed = results
-        .map((r, i) => (r.status === "rejected" ? subscriptions[i].id : null))
-        .filter(Boolean);
-
-    if (failed.length > 0) {
-        await prisma.pushSubscription.deleteMany({
-            where: { id: { in: failed as string[] } },
-        });
-    }
+    const tokens = subs.map((s) => s.fcmToken);
+    const { invalidTokens } = await sendFCMMessage(tokens, payload);
+    await cleanupInvalidTokens(invalidTokens);
 }
 
 /**
- * Send push notification to all approved users
+ * Send FCM notification to all approved users
  */
 export async function sendPushToAll(payload: NotificationPayload) {
-    const subscriptions = await prisma.pushSubscription.findMany({
+    const subs = await prisma.pushSubscription.findMany({
         where: { user: { status: "APPROVED" } },
     });
-
-    const batchSize = 100;
-    for (let i = 0; i < subscriptions.length; i += batchSize) {
-        const batch = subscriptions.slice(i, i + batchSize);
-        const results = await Promise.allSettled(
-            batch.map((sub) =>
-                webpush.sendNotification(
-                    {
-                        endpoint: sub.endpoint,
-                        keys: { p256dh: sub.p256dh, auth: sub.auth },
-                    },
-                    JSON.stringify(payload)
-                )
-            )
-        );
-
-        const failed = results
-            .map((r, idx) => (r.status === "rejected" ? batch[idx].id : null))
-            .filter(Boolean);
-
-        if (failed.length > 0) {
-            await prisma.pushSubscription.deleteMany({
-                where: { id: { in: failed as string[] } },
-            });
-        }
-    }
+    const tokens = subs.map((s) => s.fcmToken);
+    const { invalidTokens } = await sendFCMMessage(tokens, payload);
+    await cleanupInvalidTokens(invalidTokens);
 }
+

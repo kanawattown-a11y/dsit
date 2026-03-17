@@ -11,39 +11,25 @@ export async function POST(request: Request) {
         }
 
         const body = await request.json();
-        const { endpoint, p256dh, auth } = body;
+        const { fcmToken } = body;
 
-        if (!endpoint || !p256dh || !auth) {
-            return NextResponse.json({ error: "بيانات الاشتراك غير مكتملة" }, { status: 400 });
+        if (!fcmToken || typeof fcmToken !== "string") {
+            return NextResponse.json({ error: "FCM token مفقود أو غير صالح" }, { status: 400 });
         }
 
-        // Check if subscription already exists
-        const existing = await prisma.pushSubscription.findFirst({
-            where: { endpoint },
-        });
-
-        if (existing) {
-            // Unassign from any previous user and assign to current user
-            await prisma.pushSubscription.update({
-                where: { id: existing.id },
-                data: { userId: session.user.id },
-            });
-            return NextResponse.json({ success: true, message: "تم تحديث الاشتراك بنجاح" });
-        }
-
-        // Save new subscription
-        await prisma.pushSubscription.create({
-            data: {
+        // Upsert: if token exists, assign to current user; otherwise create
+        await prisma.pushSubscription.upsert({
+            where: { fcmToken },
+            update: { userId: session.user.id },
+            create: {
                 userId: session.user.id,
-                endpoint,
-                p256dh,
-                auth,
+                fcmToken,
             },
         });
 
-        return NextResponse.json({ success: true, message: "تم التسجيل بنجاح في الإشعارات" });
+        return NextResponse.json({ success: true, message: "تم التسجيل في الإشعارات بنجاح" });
     } catch (error) {
-        console.error("Push subscription error:", error);
+        console.error("FCM subscription error:", error);
         return NextResponse.json({ error: "فشل في حفظ اشتراك الإشعارات" }, { status: 500 });
     }
 }
