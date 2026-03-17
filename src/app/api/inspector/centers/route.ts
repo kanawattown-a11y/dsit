@@ -1,56 +1,38 @@
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
     try {
         const session = await getServerSession(authOptions);
-        if (!session || (session.user.role !== "INSPECTOR" && session.user.role !== "ADMIN")) {
-            return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
+        if (!session || (session.user as any).role !== "INSPECTOR") {
+            return NextResponse.json({ error: "غير مصرح." }, { status: 401 });
         }
 
+        const inspectorId = (session.user as any).id;
+        const url = new URL(req.url);
+        const search = url.searchParams.get("search") || "";
+
         const centers = await prisma.distributionCenter.findMany({
-            where: session.user.role === "INSPECTOR" ? { inspectorId: session.user.id } : {},
-            include: {
-                _count: {
-                    select: {
-                        transactions: true,
-                        inspectionReports: true,
-                    },
-                },
+            where: {
+                inspectorId: inspectorId,
+                isActive: true,
+                OR: [
+                    { name: { contains: search, mode: "insensitive" } },
+                    { region: { contains: search, mode: "insensitive" } },
+                ],
             },
-            orderBy: { name: "asc" },
+            include: {
+                distributors: { select: { id: true, fullName: true, phone: true } },
+                _count: { select: { transactions: true } }
+            },
+            orderBy: { createdAt: "desc" },
         });
 
-        const centerIds = centers.map((c) => c.id);
-
-        // Calculate quick stats
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        const [recentViolations, todayTransactions, totalWarnings] = await Promise.all([
-            prisma.inspectionReport.count({
-                where: { centerId: { in: centerIds }, status: "VIOLATION", createdAt: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } }
-            }),
-            prisma.transaction.count({
-                where: { centerId: { in: centerIds }, createdAt: { gte: today } }
-            }),
-            prisma.inspectionReport.count({
-                where: { centerId: { in: centerIds }, status: "WARNING" }
-            })
-        ]);
-
-        return NextResponse.json({
-            centers,
-            stats: {
-                recentViolations,
-                todayTransactions,
-                totalWarnings
-            }
-        });
+        return NextResponse.json({ centers });
     } catch (error) {
-        console.error(error);
-        return NextResponse.json({ error: "خطأ في الخادم" }, { status: 500 });
+        console.error("Inspector Centers GET error:", error);
+        return NextResponse.json({ error: "حدث خطأ أثناء جلب المراكز" }, { status: 500 });
     }
 }

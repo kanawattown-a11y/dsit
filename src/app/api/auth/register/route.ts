@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
+import rateLimit from "@/lib/rate-limit";
 import { z } from "zod";
+
+const limiter = rateLimit({
+    interval: 60000,
+    uniqueTokenPerInterval: 500,
+});
 
 const registerSchema = z.object({
     fullName: z.string().min(2, "الاسم يجب أن يكون حرفين على الأقل"),
@@ -26,27 +32,13 @@ export async function POST(request: Request) {
             || request.headers.get("x-real-ip")
             || "unknown";
 
-        const windowStart = new Date(Date.now() - 60 * 1000); // Last 1 minute
-
-        const attemptRecord = await prisma.loginAttempt.findFirst({
-            where: { identifier: `register:${ip}`, firstAt: { gte: windowStart } },
-        });
-
-        if (attemptRecord) {
-            if (attemptRecord.attempts >= 5) {
-                return NextResponse.json(
-                    { error: "محاولات كثيرة جداً. يرجى الانتظار دقيقة واحدة ثم المحاولة مرة أخرى" },
-                    { status: 429 }
-                );
-            }
-            await prisma.loginAttempt.update({
-                where: { id: attemptRecord.id },
-                data: { attempts: { increment: 1 } },
-            });
-        } else {
-            await prisma.loginAttempt.create({
-                data: { identifier: `register:${ip}` },
-            });
+        try {
+            await limiter.check(5, `register:${ip}`);
+        } catch (e: any) {
+            return NextResponse.json(
+                { error: "محاولات كثيرة جداً. يرجى الانتظار دقيقة واحدة ثم المحاولة مرة أخرى" },
+                { status: 429 }
+            );
         }
 
         const body = await request.json();

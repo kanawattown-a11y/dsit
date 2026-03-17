@@ -589,6 +589,7 @@ textarea.form-input {
 .table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 800px;
 }
 
 .table th {
@@ -1089,6 +1090,13 @@ textarea.form-input {
   border: 3px solid var(--navy-200);
 }
 
+.qr-frame img {
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+}
+
 .qr-frame::before {
   content: '';
   position: absolute;
@@ -1523,6 +1531,13 @@ textarea.form-input {
   .stat-card {
     flex-direction: column;
     text-align: center;
+  }
+
+  .table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: var(--space-6);
   }
 
   .table th,

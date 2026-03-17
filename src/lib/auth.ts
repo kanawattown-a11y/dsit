@@ -2,6 +2,12 @@ import { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
+import rateLimit from "@/lib/rate-limit";
+
+const limiter = rateLimit({
+    interval: 60000,
+    uniqueTokenPerInterval: 500,
+});
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -20,30 +26,11 @@ export const authOptions: NextAuthOptions = {
                 try {
                     // ── Rate Limiting: max 5 login attempts per identifier per minute ──
                     const identifier = `login:${credentials.login}`;
-                    const windowStart = new Date(Date.now() - 60 * 1000);
 
                     try {
-                        const attemptRecord = await prisma.loginAttempt.findFirst({
-                            where: { identifier, firstAt: { gte: windowStart } },
-                        });
-
-                        if (attemptRecord) {
-                            if (attemptRecord.attempts >= 5) {
-                                throw new Error("RATE_LIMITED");
-                            }
-                            await prisma.loginAttempt.update({
-                                where: { id: attemptRecord.id },
-                                data: { attempts: { increment: 1 } },
-                            });
-                        } else {
-                            await prisma.loginAttempt.create({
-                                data: { identifier },
-                            });
-                        }
-                    } catch (rateLimitErr: any) {
-                        // Re-throw RATE_LIMITED intentionally; swallow DB connectivity errors
-                        if (rateLimitErr.message === "RATE_LIMITED") throw rateLimitErr;
-                        console.error("[Auth] Rate-limit DB error (non-fatal):", rateLimitErr.message);
+                        await limiter.check(5, identifier);
+                    } catch (e: any) {
+                        throw new Error("RATE_LIMITED");
                     }
 
                     const user = await prisma.user.findFirst({
@@ -140,7 +127,7 @@ export const authOptions: NextAuthOptions = {
     },
     session: {
         strategy: "jwt",
-        maxAge: 24 * 60 * 60, // 24 hours
+        maxAge: 90 * 24 * 60 * 60, // 90 days
     },
     secret: process.env.NEXTAUTH_SECRET,
 };

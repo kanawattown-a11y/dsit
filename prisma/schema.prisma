@@ -64,6 +64,34 @@ enum FamilyBookStatus {
   REJECTED
 }
 
+enum ComplaintStatus {
+  PENDING
+  REVIEWING
+  RESOLVED
+  REJECTED
+}
+
+enum ViolationStatus {
+  PENDING
+  REVIEWING
+  PENALIZED
+  DISMISSED
+}
+
+enum InventoryCategory {
+  FLOUR
+  YEAST
+  GAS_CYLINDER
+  DIESEL
+}
+
+enum InventoryTransactionType {
+  IN
+  OUT
+  ADJUSTMENT
+}
+
+
 // ─── Users ────────────────────────────────────────────────────
 
 model User {
@@ -97,6 +125,9 @@ model User {
   inspectorCenters    DistributionCenter[]  @relation("CenterInspector")
   allocations         Allocation[]
   passwordResetTokens PasswordResetToken[]
+  complaints          Complaint[]           @relation("CitizenComplaints")
+  violationsCreated   Violation[]           @relation("InspectorViolations")
+  inventoryProcessed  InventoryTransaction[] @relation("InventoryProcessedBy")
 
   // Performance indexes for 400K+ users
   @@index([nationalId])
@@ -232,6 +263,9 @@ model DistributionCenter {
 
   transactions       Transaction[]
   inspectionReports  InspectionReport[]
+  complaints         Complaint[]          @relation("CenterComplaints")
+  violations         Violation[]          @relation("CenterViolations")
+  inventories        CenterInventory[]    @relation("CenterInventory")
 
   @@index([type])
   @@index([region])
@@ -394,3 +428,92 @@ model LoginAttempt {
   @@index([identifier])
   @@index([blockedUntil])
 }
+
+// ─── Complaints ───────────────────────────────────────────────
+
+model Complaint {
+  id          String         @id @default(cuid())
+  userId      String
+  user        User           @relation("CitizenComplaints", fields: [userId], references: [id])
+  centerId    String?
+  center      DistributionCenter? @relation("CenterComplaints", fields: [centerId], references: [id])
+  subject     String
+  description String
+  images      String[]       // Array of S3 URLs
+  status      ComplaintStatus @default(PENDING)
+  adminReply  String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([userId])
+  @@index([centerId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ─── Violations ───────────────────────────────────────────────
+
+model Violation {
+  id          String        @id @default(cuid())
+  inspectorId String
+  inspector   User          @relation("InspectorViolations", fields: [inspectorId], references: [id])
+  centerId    String
+  center      DistributionCenter @relation("CenterViolations", fields: [centerId], references: [id])
+  details     String
+  fineAmount  Float?
+  images      String[]      // Array of S3 URLs
+  status      ViolationStatus @default(PENDING)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([inspectorId])
+  @@index([centerId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ─── System Settings ──────────────────────────────────────────
+
+model SystemSetting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String   // stored as JSON string or raw string
+  description String?
+  updatedBy   String?
+  updatedAt   DateTime @updatedAt
+  
+  @@index([key])
+}
+
+// ─── Inventory Management ─────────────────────────────────────
+
+model CenterInventory {
+  id          String             @id @default(cuid())
+  centerId    String
+  center      DistributionCenter @relation("CenterInventory", fields: [centerId], references: [id])
+  category    InventoryCategory
+  quantity    Float              @default(0) // total available stock
+  lastUpdated DateTime           @updatedAt
+
+  transactions InventoryTransaction[]
+
+  @@unique([centerId, category]) // one record per category per center
+  @@index([centerId])
+}
+
+model InventoryTransaction {
+  id              String             @id @default(cuid())
+  inventoryId     String
+  inventory       CenterInventory    @relation(fields: [inventoryId], references: [id])
+  type            InventoryTransactionType
+  amount          Float
+  notes           String?
+  processedById   String?
+  processedBy     User?              @relation("InventoryProcessedBy", fields: [processedById], references: [id])
+  createdAt       DateTime           @default(now())
+
+  @@index([inventoryId])
+  @@index([processedById])
+  @@index([createdAt])
+}
+

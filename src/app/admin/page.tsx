@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
+import AdminCharts from "./AdminCharts";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,8 @@ async function getStats() {
         todayTransactions,
         totalAllocations,
         recentUsers,
+        centersByTypeRaw,
+        usersByRoleRaw,
     ] = await Promise.all([
         prisma.user.count(),
         prisma.user.count({ where: { status: "PENDING" } }),
@@ -41,7 +44,27 @@ async function getStats() {
                 region: true,
             },
         }),
+        prisma.distributionCenter.groupBy({
+            by: ['type'],
+            _count: { id: true }
+        }),
+        prisma.user.groupBy({
+            by: ['role'],
+            _count: { id: true }
+        })
     ]);
+
+    const centerTypesMap: Record<string, string> = { BAKERY: "مخابز", GAS_STATION: "معتمدي غاز", SUPPLY_CENTER: "صالات السورية", FUEL_STATION: "محطات وقود" };
+    const centersChart = centersByTypeRaw.map(c => ({
+        name: centerTypesMap[c.type] || c.type,
+        count: c._count.id
+    })).sort((a, b) => b.count - a.count);
+
+    const rolesMap: Record<string, string> = { ADMIN: "مدير نظام", USER: "مواطن (عائلة)", INSPECTOR: "مفتش تمويني", DISTRIBUTOR: "موزع" };
+    const usersChart = usersByRoleRaw.map(u => ({
+        name: rolesMap[u.role] || u.role,
+        count: u._count.id
+    })).filter(u => u.count > 0).sort((a, b) => b.count - a.count);
 
     return {
         totalUsers,
@@ -54,6 +77,8 @@ async function getStats() {
         todayTransactions,
         totalAllocations,
         recentUsers,
+        centersChart,
+        usersChart,
     };
 }
 
@@ -170,6 +195,9 @@ export default async function AdminDashboard() {
                     </div>
                 </div>
             </div>
+
+            {/* Recharts Analytics Panel */}
+            <AdminCharts usersChart={stats.usersChart} centersChart={stats.centersChart} />
 
             {/* Pending Users Table */}
             {stats.pendingUsers > 0 && (

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "827168837543",
+    "project_id": "dsit-bashan",
+    "storage_bucket": "dsit-bashan.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:827168837543:android:9aa68c3ae826bb5bf13082",
+        "android_client_info": {
+          "package_name": "org.dsit.suwayda"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvdoIQp2rYlGLVLUbnEm_KQ7jSzWIYLhc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

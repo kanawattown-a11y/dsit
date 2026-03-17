@@ -6,57 +6,36 @@ import { authOptions } from "@/lib/auth";
 export async function GET(req: NextRequest) {
     try {
         const session = await getServerSession(authOptions);
-        if (!session || session.user.role !== "USER") {
-            return NextResponse.json({ error: "غير مصرح لك بالوصول" }, { status: 401 });
+        if (!session || !session.user) {
+            return NextResponse.json({ error: "غير مصرح." }, { status: 401 });
         }
 
+        const userId = (session.user as any).id;
+
+        // Fetch notifications specific to this user or role-based (targetRole=USER && targetUserId=null)
         const notifications = await prisma.notification.findMany({
             where: {
-                targetUserId: session.user.id
+                OR: [
+                    { targetUserId: userId },
+                    { targetUserId: null, targetRole: (session.user as any).role }
+                ]
             },
             orderBy: { createdAt: "desc" },
             take: 50 // Limit to last 50
         });
 
-        const unreadCount = notifications.filter(n => !n.isRead).length;
-
-        return NextResponse.json({ notifications, unreadCount });
-    } catch (error) {
-        console.error("Notifications API Error:", error);
-        return NextResponse.json({ error: "حدث خطأ أثناء جلب الإشعارات" }, { status: 500 });
-    }
-}
-
-export async function PUT(req: NextRequest) {
-    try {
-        const session = await getServerSession(authOptions);
-        if (!session || session.user.role !== "USER") {
-            return NextResponse.json({ error: "غير مصرح لك بالوصول" }, { status: 401 });
-        }
-
-        const body = await req.json();
-
-        // Mark all as read
-        if (body.markAllRead) {
+        // Mark as read immediately when fetched
+        const unreadIds = notifications.filter(n => !n.isRead && n.targetUserId === userId).map(n => n.id);
+        if (unreadIds.length > 0) {
             await prisma.notification.updateMany({
-                where: { targetUserId: session.user.id, isRead: false },
+                where: { id: { in: unreadIds } },
                 data: { isRead: true }
             });
-            return NextResponse.json({ success: true });
         }
 
-        // Mark specific as read
-        if (body.notificationId) {
-            await prisma.notification.update({
-                where: { id: body.notificationId, targetUserId: session.user.id },
-                data: { isRead: true }
-            });
-            return NextResponse.json({ success: true });
-        }
-
-        return NextResponse.json({ error: "طلب غير صالح" }, { status: 400 });
-
+        return NextResponse.json({ notifications });
     } catch (error) {
-        return NextResponse.json({ error: "حدث خطأ أثناء تحديث الإشعارات" }, { status: 500 });
+        console.error("Citizen Notifications GET error:", error);
+        return NextResponse.json({ error: "حدث خطأ أثناء تحميل الإشعارات" }, { status: 500 });
     }
 }
