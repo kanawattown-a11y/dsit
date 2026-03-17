@@ -1,18 +1,16 @@
-import webpush from "web-push";
+import { fcmAdmin } from "./firebase-admin";
 import prisma from "./prisma";
 
-// Ensure VAPID keys are set, or it will throw
-if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
-    webpush.setVapidDetails(
-        "mailto:admin@As-Suwayda-dsit.gov",
-        process.env.VAPID_PUBLIC_KEY,
-        process.env.VAPID_PRIVATE_KEY
-    );
-}
-
-export async function sendPushNotification(userId: string, payload: { title: string; body: string; url?: string }) {
-    if (!process.env.VAPID_PUBLIC_KEY) {
-        console.warn("[Push] VAPID keys not configured. Skipping push notification.");
+/**
+ * Send FCM push notification to a specific user (all their devices)
+ * Drop-in replacement for the old VAPID-based sendPushNotification
+ */
+export async function sendPushNotification(
+    userId: string,
+    payload: { title: string; body: string; url?: string }
+) {
+    if (!fcmAdmin) {
+        console.warn("[FCM] Firebase Admin not initialised. Skipping push notification.");
         return;
     }
 
@@ -23,31 +21,50 @@ export async function sendPushNotification(userId: string, payload: { title: str
 
         if (subscriptions.length === 0) return;
 
-        const pushPayload = JSON.stringify(payload);
+        const tokens = subscriptions.map((s) => s.fcmToken);
 
-        await Promise.allSettled(
-            subscriptions.map(async (sub) => {
-                const pushSubscription = {
-                    endpoint: sub.endpoint,
-                    keys: {
-                        p256dh: sub.p256dh,
-                        auth: sub.auth,
-                    },
-                };
+        const message = {
+            tokens,
+            notification: {
+                title: payload.title,
+                body:  payload.body,
+            },
+            webpush: {
+                notification: {
+                    icon: "/logo.jpeg",
+                    dir:  "rtl",
+                    lang: "ar",
+                    vibrate: [200, 100, 200],
+                },
+                fcmOptions: {
+                    link: payload.url || "/",
+                },
+            },
+            data: {
+                url: payload.url || "/",
+            },
+        };
 
-                try {
-                    await webpush.sendNotification(pushSubscription, pushPayload);
-                } catch (err: any) {
-                    if (err.statusCode === 410 || err.statusCode === 404) {
-                        // Subscription has unsubscribed or expired. Delete it.
-                        await prisma.pushSubscription.delete({ where: { id: sub.id } });
-                    } else {
-                        console.error("[Push] Error sending notification:", err);
-                    }
-                }
-            })
-        );
+        const response = await fcmAdmin.sendEachForMulticast(message as any);
+
+        // Clean up invalid tokens
+        const invalidTokens: string[] = [];
+        response.responses.forEach((r, idx) => {
+            const code = r.error?.code;
+            if (
+                code === "messaging/registration-token-not-registered" ||
+                code === "messaging/invalid-registration-token"
+            ) {
+                invalidTokens.push(tokens[idx]);
+            }
+        });
+
+        if (invalidTokens.length > 0) {
+            await prisma.pushSubscription.deleteMany({
+                where: { fcmToken: { in: invalidTokens } },
+            });
+        }
     } catch (error) {
-        console.error("[Push] Global error:", error);
+        console.error("[FCM] Global error:", error);
     }
 }
