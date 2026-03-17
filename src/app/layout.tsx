@@ -8,6 +8,9 @@ export const metadata: Metadata = {
     description: "نظام إدارة ومراقبة وتوزيع المخصصات الحكومية للمواطنين - مديرية التموين والتجارة الداخلية في السويداء",
     keywords: ["تموين", "مخصصات", "توزيع", "محروقات", "دفتر عائلة", "DSIT"],
     authors: [{ name: "مديرية التموين والتجارة الداخلية" }],
+    icons: {
+        icon: "/logo.jpeg",
+    },
 };
 
 export default function RootLayout({
