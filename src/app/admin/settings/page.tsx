@@ -76,7 +76,7 @@ export default function AdminSettingsPage() {
     };
 
     return (
-        <main className="container" style={{ padding: "var(--space-6)" }}>
+        <main className="page-container">
             <div className="page-header" style={{ marginBottom: "var(--space-6)" }}>
                 <h1 className="page-title">إعدادات النظام المركزية</h1>
                 <p className="page-description">التحكم بكميات التوزيع ومحصصات البطاقات لكافة المواطنين في المحافظة.</p>
@@ -85,7 +85,7 @@ export default function AdminSettingsPage() {
             {loading ? (
                 <div style={{ textAlign: "center", padding: "var(--space-12)" }}>جاري تحميل الإعدادات...</div>
             ) : (
-                <div className="admin-card">
+                <div className="card">
                     <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: "var(--space-6)" }}>
                         <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "var(--space-4)" }}>
                             {DEFAULT_KEYS.map((k) => (
@@ -95,7 +95,7 @@ export default function AdminSettingsPage() {
                                     </label>
                                     <input
                                         type={k.defaultValue === "true" || k.defaultValue === "false" ? "text" : "number"}
-                                        className="input"
+                                        className="input-field"
                                         value={settings[k.key] || ""}
                                         onChange={(e) => handleChange(k.key, e.target.value)}
                                         style={{ background: "white", marginTop: "var(--space-2)" }}

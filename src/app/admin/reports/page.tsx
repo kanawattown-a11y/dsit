@@ -87,7 +87,7 @@ export default function AdminReportsPage() {
     };
 
     return (
-        <main className="container" style={{ padding: "var(--space-6)" }}>
+        <main className="page-container">
             <div className="page-header" style={{ marginBottom: "var(--space-6)" }}>
                 <h1 className="page-title">مراقبة الشكاوى والضبوط</h1>
                 <p className="page-description">مراجعة وتحليل كافة شكاوى المواطنين والمخالفات المسجلة من قبل المفتشين.</p>
@@ -108,7 +108,7 @@ export default function AdminReportsPage() {
                 </button>
             </div>
 
-            <div className="admin-card" style={{ padding: 0, overflowX: "auto" }}>
+            <div className="card table-container animate-fade-in" style={{ padding: 0 }}>
                 {loading ? (
                     <div style={{ padding: "var(--space-12)", textAlign: "center" }}>جاري تحميل السجلات...</div>
                 ) : data.length === 0 ? (
@@ -120,7 +120,7 @@ export default function AdminReportsPage() {
                         <p>لا توجد بيانات حالية في هذا القسم.</p>
                     </div>
                 ) : (
-                    <table className="table" style={{ width: "100%", minWidth: "900px" }}>
+                    <table className="table">
                         <thead>
                             {activeTab === "complaints" ? (
                                 <tr>
@@ -204,7 +204,7 @@ export default function AdminReportsPage() {
                             <div className="form-group">
                                 <label className="form-label">القرار الإداري (الحالة) *</label>
                                 <select 
-                                    className="input" 
+                                    className="form-select" 
                                     required 
                                     value={formData.status} 
                                     onChange={(e) => setFormData({...formData, status: e.target.value})}
@@ -231,7 +231,7 @@ export default function AdminReportsPage() {
                                 <div className="form-group">
                                     <label className="form-label">رد الإدارة (يصل للمواطن)</label>
                                     <textarea 
-                                        className="input" 
+                                        className="input-field" 
                                         rows={3} 
                                         placeholder="اكتب ردك ليظهر في صندوق شكاوى المواطن..."
                                         value={formData.adminReply}
@@ -245,7 +245,7 @@ export default function AdminReportsPage() {
                                     <label className="form-label">الغرامة المادية المعتمدة (ل.س)</label>
                                     <input 
                                         type="number" 
-                                        className="input" 
+                                        className="input-field" 
                                         placeholder="أدخل مبلغ المخالفة النهائي لتثبيته للمحاسبة..."
                                         value={formData.fineAmount}
                                         onChange={(e) => setFormData({...formData, fineAmount: e.target.value})}

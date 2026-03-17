@@ -96,7 +96,7 @@ export default function AdminInventoryPage() {
     };
 
     return (
-        <main className="container" style={{ padding: "var(--space-6)" }}>
+        <main className="page-container">
             <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--space-6)" }}>
                 <div>
                     <h1 className="page-title">إدارة وتوزيع المخزون</h1>
@@ -107,11 +107,11 @@ export default function AdminInventoryPage() {
                 </button>
             </div>
 
-            <div className="admin-card" style={{ marginBottom: "var(--space-6)" }}>
+            <div className="card mb-6">
                 <form onSubmit={handleSearch} style={{ display: "flex", gap: "var(--space-4)" }}>
                     <input
                         type="text"
-                        className="input"
+                        className="input-field"
                         placeholder="ابحث عن مركز معين..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
@@ -121,15 +121,14 @@ export default function AdminInventoryPage() {
                 </form>
             </div>
 
-            <div className="admin-card" style={{ padding: 0, overflowX: "auto" }}>
+            <div className="card table-container animate-fade-in" style={{ padding: 0 }}>
                 {loading ? (
                     <div style={{ textAlign: "center", padding: "var(--space-12)" }}>جاري تحميل البيانات...</div>
                 ) : centers.length === 0 ? (
                     <div style={{ textAlign: "center", padding: "var(--space-12)", color: "var(--gray-500)" }}>لا توجد مراكز مطابقة.</div>
                 ) : (
-                    <div className="table-container">
-                        <table className="table" style={{ width: "100%", minWidth: "900px" }}>
-                            <thead>
+                    <table className="table">
+                        <thead>
                                 <tr>
                                     <th>المركز</th>
                                     <th>المنطقة</th>
@@ -167,7 +166,6 @@ export default function AdminInventoryPage() {
                                 ))}
                             </tbody>
                         </table>
-                    </div>
                 )}
             </div>
 
@@ -183,7 +181,7 @@ export default function AdminInventoryPage() {
                             <div className="form-group">
                                 <label className="form-label">المركز المستهدف *</label>
                                 <select 
-                                    className="input" 
+                                    className="form-select" 
                                     required 
                                     value={formData.centerId} 
                                     onChange={(e) => setFormData({...formData, centerId: e.target.value})}
@@ -197,7 +195,7 @@ export default function AdminInventoryPage() {
                                 <div className="form-group" style={{ flex: 1 }}>
                                     <label className="form-label">نوع المادة *</label>
                                     <select 
-                                        className="input" 
+                                        className="form-select" 
                                         required 
                                         value={formData.category} 
                                         onChange={(e) => setFormData({...formData, category: e.target.value})}
@@ -209,7 +207,7 @@ export default function AdminInventoryPage() {
                                 <div className="form-group" style={{ flex: 1 }}>
                                     <label className="form-label">نوع الحركة *</label>
                                     <select 
-                                        className="input" 
+                                        className="form-select" 
                                         required 
                                         value={formData.type} 
                                         onChange={(e) => setFormData({...formData, type: e.target.value})}
@@ -225,7 +223,7 @@ export default function AdminInventoryPage() {
                                 <label className="form-label">الكمية *</label>
                                 <input 
                                     type="number" 
-                                    className="input" 
+                                    className="input-field" 
                                     required 
                                     min="0.1"
                                     step="0.1"
@@ -239,7 +237,7 @@ export default function AdminInventoryPage() {
                                 <label className="form-label">ملاحظات والتبرير (سجل إلزامي للمحاسبة)</label>
                                 <input 
                                     type="text" 
-                                    className="input" 
+                                    className="input-field" 
                                     placeholder="مثال: مخصصات شهر 2 قادمة من سادكوب..."
                                     required
                                     value={formData.notes}

@@ -108,7 +108,7 @@ function ViolationsContent() {
     };
 
     return (
-        <main className="container" style={{ padding: "var(--space-6)" }}>
+        <main className="page-container">
             <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--space-6)" }}>
                 <div>
                     <h1 className="page-title">الضبوط والمخالفات التموينية</h1>
@@ -130,11 +130,10 @@ function ViolationsContent() {
                     <p>لم تقم بتسجيل أي مخالفة تموينية حتى الآن.</p>
                 </div>
             ) : (
-                <div className="admin-card" style={{ padding: 0, overflowX: "auto" }}>
-                    <div className="table-container">
-                        <table className="table" style={{ width: "100%", minWidth: "800px" }}>
-                            <thead>
-                                <tr>
+                <div className="card table-container animate-fade-in" style={{ padding: 0 }}>
+                    <table className="table">
+                        <thead>
+                            <tr>
                                     <th>التاريخ</th>
                                     <th>المركز المخالف</th>
                                     <th>المنطقة</th>
@@ -158,7 +157,6 @@ function ViolationsContent() {
                                 ))}
                             </tbody>
                         </table>
-                    </div>
                 </div>
             )}
 
@@ -173,7 +171,7 @@ function ViolationsContent() {
                             <div className="form-group">
                                 <label className="form-label">المركز المخالف *</label>
                                 <select 
-                                    className="input" 
+                                    className="form-select" 
                                     required 
                                     value={formData.centerId} 
                                     onChange={(e) => setFormData({...formData, centerId: e.target.value})}
@@ -186,7 +184,7 @@ function ViolationsContent() {
                             <div className="form-group">
                                 <label className="form-label">تفاصيل الضبط أو الشكوى *</label>
                                 <textarea 
-                                    className="input" 
+                                    className="input-field" 
                                     required 
                                     rows={4} 
                                     placeholder="اكتب تفاصيل المخالفة (مثال: تلاعب بالوزن، بيع خارج المنصة، جودة سيئة...)"
@@ -199,7 +197,7 @@ function ViolationsContent() {
                                 <label className="form-label">الغرامة المقترحة أو المسجلة (ل.س) - اختياري</label>
                                 <input 
                                     type="number" 
-                                    className="input" 
+                                    className="input-field" 
                                     placeholder="مثال: 500000"
                                     value={formData.fineAmount}
                                     onChange={(e) => setFormData({...formData, fineAmount: e.target.value})}

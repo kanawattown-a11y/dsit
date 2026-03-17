@@ -58,8 +58,8 @@ export default function CitizenNotificationsPage() {
     };
 
     return (
-        <main className="container" style={{ padding: "var(--space-6)" }}>
-            <div className="page-header" style={{ marginBottom: "var(--space-6)" }}>
+        <main className="page-container">
+            <div className="page-header">
                 <h1 className="page-title">سجل الإشعارات</h1>
                 <p className="page-description">تصفح كافة الرسائل والتنبيهات الموجهة إليك حتى وإن فاتتك على الهاتف.</p>
             </div>
@@ -77,15 +77,16 @@ export default function CitizenNotificationsPage() {
             ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
                     {notifications.map((msg) => (
-                        <div key={msg.id} className="admin-card" style={{ 
+                        <div key={msg.id} className="card" style={{ 
                             display: "flex", gap: "var(--space-4)", alignItems: "flex-start",
-                            borderLeft: !msg.isRead ? "4px solid var(--primary-500)" : "1px solid var(--gray-200)",
-                            background: !msg.isRead ? "var(--primary-50)" : "white" 
+                            borderRight: !msg.isRead ? "4px solid var(--primary-500)" : "1px solid var(--gray-200)",
+                            background: !msg.isRead ? "var(--primary-50)" : "white",
+                            padding: "var(--space-4)"
                         }}>
                             {getTypeIcon(msg.type)}
                             <div style={{ flex: 1 }}>
                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--space-1)" }}>
-                                    <h3 style={{ fontSize: "var(--font-size-md)", fontWeight: !msg.isRead ? 700 : 600, color: "var(--navy-900)" }}>
+                                    <h3 style={{ fontSize: "var(--font-size-base)", fontWeight: !msg.isRead ? 700 : 600, color: "var(--navy-900)" }}>
                                         {msg.title}
                                     </h3>
                                     <span style={{ fontSize: "var(--font-size-xs)", color: "var(--gray-500)" }}>

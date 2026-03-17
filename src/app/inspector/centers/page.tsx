@@ -53,7 +53,7 @@ export default function InspectorCentersPage() {
     }
 
     return (
-        <main className="container" style={{ padding: "var(--space-6)" }}>
+        <main className="page-container">
             <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--space-6)" }}>
                 <div>
                     <h1 className="page-title">مراكز التوزيع الخاضعة لتفتيشي</h1>
@@ -61,11 +61,11 @@ export default function InspectorCentersPage() {
                 </div>
             </div>
 
-            <div className="admin-card" style={{ marginBottom: "var(--space-6)" }}>
+            <div className="card mb-6">
                 <form onSubmit={handleSearch} style={{ display: "flex", gap: "var(--space-4)" }}>
                     <input
                         type="text"
-                        className="input"
+                        className="input-field"
                         placeholder="ابحث عن مركز بالاسم أو المنطقة..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
@@ -88,7 +88,7 @@ export default function InspectorCentersPage() {
             ) : (
                 <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "var(--space-4)" }}>
                     {centers.map((center) => (
-                        <div key={center.id} className="admin-card" style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
+                        <div key={center.id} className="card" style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                                 <div>
                                     <h3 style={{ fontSize: "var(--font-size-lg)", fontWeight: 700, color: "var(--navy-900)" }}>

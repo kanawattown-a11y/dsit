@@ -98,7 +98,7 @@ export default function CitizenComplaintsPage() {
     };
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-6)" }}>
+        <div className="page-container">
             <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                     <h1 className="page-title">صندوق الشكاوى والمقترحات</h1>
@@ -112,7 +112,7 @@ export default function CitizenComplaintsPage() {
             </div>
 
             {isFormOpen && (
-                <div className="admin-card">
+                <div className="card mb-6 animate-slide-up">
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "var(--space-4)" }}>
                         <h2 style={{ fontSize: "var(--font-size-lg)", fontWeight: 600 }}>تفاصيل الشكوى</h2>
                         <button className="btn btn-ghost" onClick={() => setIsFormOpen(false)}>إلغاء</button>
@@ -122,7 +122,7 @@ export default function CitizenComplaintsPage() {
                             <label className="form-label">موضوع الشكوى *</label>
                             <input 
                                 type="text" 
-                                className="input" 
+                                className="input-field" 
                                 required 
                                 placeholder="مثال: الخبز غير ناضج، وزن الغاز ناقص..."
                                 value={formData.subject}
@@ -133,7 +133,7 @@ export default function CitizenComplaintsPage() {
                         <div className="form-group">
                             <label className="form-label">المركز المشتكى عليه (اختياري)</label>
                             <select 
-                                className="input" 
+                                className="form-select" 
                                 value={formData.centerId}
                                 onChange={(e) => setFormData({...formData, centerId: e.target.value})}
                             >
@@ -145,7 +145,7 @@ export default function CitizenComplaintsPage() {
                         <div className="form-group">
                             <label className="form-label">تفاصيل المشكلة بدقة *</label>
                             <textarea 
-                                className="input" 
+                                className="input-field" 
                                 required 
                                 rows={5}
                                 placeholder="يرجى كتابة كافة تفاصيل الشكوى ليتمكن المفتش من متابعتها..."
@@ -162,7 +162,7 @@ export default function CitizenComplaintsPage() {
             )}
 
             {!isFormOpen && (
-                <div className="admin-card" style={{ padding: 0, overflowX: "auto" }}>
+                <div className="card table-container animate-fade-in">
                     {loading ? (
                         <div style={{ padding: "var(--space-12)", textAlign: "center" }}>جاري تحميل شكاواك السابقة...</div>
                     ) : complaints.length === 0 ? (
@@ -174,7 +174,7 @@ export default function CitizenComplaintsPage() {
                             <p>لم تقم بإرسال أي شكوى سابقة.</p>
                         </div>
                     ) : (
-                        <table className="table" style={{ width: "100%", minWidth: "900px" }}>
+                        <table className="table">
                             <thead>
                                 <tr>
                                     <th>التاريخ</th>
