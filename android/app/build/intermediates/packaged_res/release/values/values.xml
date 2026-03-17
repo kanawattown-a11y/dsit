@@ -4,7 +4,7 @@
     <color name="navy_900">#111E38</color>
     <color name="primary">#63a6dd</color>
     <color name="white">#FFFFFF</color>
-    <string name="app_name">مديرية التموين السويداء</string>
+    <string name="app_name">D.S.I.T</string>
     <string name="gcm_defaultSenderId" translatable="false">827168837543</string>
     <string name="google_api_key" translatable="false">AIzaSyAvdoIQp2rYlGLVLUbnEm_KQ7jSzWIYLhc</string>
     <string name="google_app_id" translatable="false">1:827168837543:android:9aa68c3ae826bb5bf13082</string>

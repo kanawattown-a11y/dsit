@@ -93,7 +93,7 @@ export default function AdminReportsPage() {
                 <p className="page-description">مراجعة وتحليل كافة شكاوى المواطنين والمخالفات المسجلة من قبل المفتشين.</p>
             </div>
 
-            <div style={{ display: "flex", gap: "var(--space-2)", marginBottom: "var(--space-4)" }}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)", marginBottom: "var(--space-4)" }}>
                 <button 
                     className={`btn ${activeTab === "complaints" ? "btn-primary" : "btn-outline"}`}
                     onClick={() => setActiveTab("complaints")}

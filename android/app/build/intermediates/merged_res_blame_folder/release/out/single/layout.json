@@ -1,10 +1,14 @@
 [
     {
-        "merged": "org.dsit.suwayda.app-mergeReleaseResources-36:/layout/activity_main.xml",
-        "source": "org.dsit.suwayda.app-main-38:/layout/activity_main.xml"
+        "merged": "C:\\Users\\Dell\\.gradle\\daemon\\9.0-milestone-1\\org.dsit.suwayda.app-mergeReleaseResources-36:\\layout\\activity_main.xml",
+        "source": "C:\\Users\\Dell\\.gradle\\daemon\\9.0-milestone-1\\org.dsit.suwayda.app-main-38:\\layout\\activity_main.xml"
     },
     {
         "merged": "org.dsit.suwayda.app-mergeReleaseResources-36:/layout/activity_splash.xml",
         "source": "org.dsit.suwayda.app-main-38:/layout/activity_splash.xml"
+    },
+    {
+        "merged": "C:\\Users\\Dell\\.gradle\\daemon\\9.0-milestone-1\\org.dsit.suwayda.app-mergeReleaseResources-36:\\layout\\activity_splash.xml",
+        "source": "C:\\Users\\Dell\\.gradle\\daemon\\9.0-milestone-1\\org.dsit.suwayda.app-main-38:\\layout\\activity_splash.xml"
     }
 ]

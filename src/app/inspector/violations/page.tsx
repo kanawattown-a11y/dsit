@@ -109,12 +109,12 @@ function ViolationsContent() {
 
     return (
         <main className="page-container">
-            <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--space-6)" }}>
+            <div className="page-header" style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-4)", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "var(--space-6)" }}>
                 <div>
                     <h1 className="page-title">الضبوط والمخالفات التموينية</h1>
                     <p className="page-description">إدارة وتأسيس الضبوط للمراكز المخالفة.</p>
                 </div>
-                <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
+                <button className="btn btn-primary" onClick={() => setIsModalOpen(true)} style={{ whiteSpace: "nowrap" }}>
                     + كتابة ضبط جديد
                 </button>
             </div>

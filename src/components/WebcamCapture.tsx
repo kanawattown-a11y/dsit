@@ -67,9 +67,16 @@ export default function WebcamCapture({ onCapture, onError, label = "التقا�
             const context = canvas.getContext("2d");
 
             if (context) {
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                // Crop to a square from the center of the video feed
+                const size = Math.min(video.videoWidth, video.videoHeight);
+                canvas.width = size;
+                canvas.height = size;
+                
+                const startX = (video.videoWidth - size) / 2;
+                const startY = (video.videoHeight - size) / 2;
+
+                // Draw the mirrored square portion (optional mirroring, but standard is just crop)
+                context.drawImage(video, startX, startY, size, size, 0, 0, size, size);
 
                 canvas.toBlob((blob) => {
                     if (blob) {
@@ -87,53 +94,57 @@ export default function WebcamCapture({ onCapture, onError, label = "التقا�
     return (
         <div style={{ width: "100%", textAlign: "center" }}>
             {capturedImage ? (
-                <div style={{ position: "relative", display: "block", width: "100%", borderRadius: "var(--radius)", overflow: "hidden", border: "2px solid var(--primary-light)" }}>
-                    <img src={capturedImage} alt="Captured preview" style={{ width: "100%", height: "auto", maxHeight: 400, objectFit: "cover", display: "block" }} />
+                <div style={{ position: "relative", display: "inline-block", width: 220, height: 220, borderRadius: "50%", overflow: "hidden", border: "4px solid var(--primary-light)", margin: "0 auto", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}>
+                    <img src={capturedImage} alt="Captured preview" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                     <button
                         type="button"
                         onClick={startCamera}
                         className="btn btn-sm btn-primary"
-                        style={{ position: "absolute", bottom: 10, left: "50%", transform: "translateX(-50%)", boxShadow: "0 2px 10px rgba(0,0,0,0.2)" }}
+                        style={{ position: "absolute", bottom: 15, left: "50%", transform: "translateX(-50%)", padding: "4px 12px", fontSize: "0.8rem", borderRadius: "var(--radius-full)" }}
                     >
                         إعادة التصوير
                     </button>
                 </div>
             ) : isCameraOpen ? (
-                <div style={{ position: "relative", display: "block", width: "100%", borderRadius: "var(--radius)", overflow: "hidden", background: "#000", minHeight: 250 }}>
+                <div style={{ position: "relative", display: "inline-block", width: 250, height: 250, borderRadius: "50%", overflow: "hidden", background: "#000", margin: "0 auto", border: "4px solid var(--gray-200)", boxShadow: "0 8px 24px rgba(0,0,0,0.15)" }}>
                     <video
                         ref={videoRef}
                         autoPlay
                         playsInline
                         muted
-                        style={{ width: "100%", height: "auto", maxHeight: 400, objectFit: "cover", display: "block" }} 
+                        style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transform: "scaleX(-1)" }} 
                     />
                     <canvas ref={canvasRef} style={{ display: "none" }} />
                     
-                    <div style={{ position: "absolute", bottom: 15, left: 0, right: 0, display: "flex", justifyContent: "center", gap: 10 }}>
+                    {/* Capture Frame Overlay */}
+                    <div style={{ position: "absolute", inset: 0, border: "2px dashed rgba(255,255,255,0.4)", borderRadius: "50%", pointerEvents: "none", margin: "10px" }} />
+
+                    <div style={{ position: "absolute", bottom: 15, left: 0, right: 0, display: "flex", justifyContent: "center", zIndex: 10 }}>
                         <button
                             type="button"
                             onClick={handleCapture}
                             style={{ 
-                                width: 60, height: 60, borderRadius: "50%", background: "rgba(255,255,255,0.3)", 
+                                width: 56, height: 56, borderRadius: "50%", background: "rgba(255,255,255,0.4)", 
                                 border: "4px solid white", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-                                padding: 0, outline: "none"
+                                padding: 0, outline: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.2)"
                             }}
                             title="التقاط"
                         >
-                            <div style={{ width: 44, height: 44, borderRadius: "50%", background: "white" }} />
-                        </button>
-                        <button
-                            type="button"
-                            onClick={stopCamera}
-                            style={{ 
-                                position: "absolute", right: 15, top: "50%", transform: "translateY(-50%)",
-                                background: "rgba(0,0,0,0.5)", color: "white", border: "none", borderRadius: "var(--radius)",
-                                padding: "8px 12px", cursor: "pointer", fontSize: "0.85rem"
-                            }}
-                        >
-                            إلغاء
+                            <div style={{ width: 40, height: 40, borderRadius: "50%", background: "white" }} />
                         </button>
                     </div>
+
+                    <button
+                        type="button"
+                        onClick={stopCamera}
+                        style={{ 
+                            position: "absolute", top: 15, right: "50%", transform: "translateX(50%)",
+                            background: "rgba(0,0,0,0.5)", color: "white", border: "none", borderRadius: "var(--radius-full)",
+                            padding: "4px 12px", fontSize: "0.80rem", cursor: "pointer", zIndex: 10
+                        }}
+                    >
+                        إلغاء
+                    </button>
                 </div>
             ) : (
                 <button

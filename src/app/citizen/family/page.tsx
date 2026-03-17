@@ -209,7 +209,7 @@ export default function CitizenFamilyBookPage() {
                     </div>
                 )}
 
-                <div className="grid-2" style={{ alignItems: "start" }}>
+                <div className="grid" style={{ alignItems: "start", gap: "var(--space-6)" }}>
                     {/* Left: Metadata */}
                     <div className="card">
                         <h3 style={{ marginBottom: "var(--space-4)", borderBottom: "1px solid var(--gray-200)", paddingBottom: "var(--space-2)" }}>معلومات الدفتر الأساسية</h3>

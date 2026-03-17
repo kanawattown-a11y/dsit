@@ -99,13 +99,13 @@ export default function CitizenComplaintsPage() {
 
     return (
         <div className="page-container">
-            <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div className="page-header" style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-4)", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <div>
                     <h1 className="page-title">صندوق الشكاوى والمقترحات</h1>
                     <p className="page-description">لتبليغ الإدارة عن أي مخالفات بالأسعار، سوء الصنع، أو التلاعب بالأوزان.</p>
                 </div>
                 {!isFormOpen && (
-                    <button className="btn btn-primary" onClick={() => setIsFormOpen(true)}>
+                    <button className="btn btn-primary" onClick={() => setIsFormOpen(true)} style={{ whiteSpace: "nowrap" }}>
                         + كتابة شكوى
                     </button>
                 )}

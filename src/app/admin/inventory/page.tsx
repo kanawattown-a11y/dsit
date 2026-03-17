@@ -97,12 +97,12 @@ export default function AdminInventoryPage() {
 
     return (
         <main className="page-container">
-            <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--space-6)" }}>
+            <div className="page-header" style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-4)", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "var(--space-6)" }}>
                 <div>
                     <h1 className="page-title">إدارة وتوزيع المخزون</h1>
                     <p className="page-description">مراقبة الأرصدة المتوفرة في المراكز وتخصيص حصص جديدة.</p>
                 </div>
-                <button className="btn btn-primary" onClick={() => setIsAddModalOpen(true)}>
+                <button className="btn btn-primary" onClick={() => setIsAddModalOpen(true)} style={{ whiteSpace: "nowrap" }}>
                     + تزويد مركز بمخصصات
                 </button>
             </div>

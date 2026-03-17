@@ -121,26 +121,37 @@ class MainActivity : AppCompatActivity() {
                 this@MainActivity.filePathCallback?.onReceiveValue(null)
                 this@MainActivity.filePathCallback = filePathCallback
 
-                var takePictureIntent: Intent? = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                if (takePictureIntent?.resolveActivity(packageManager) != null) {
-                    var photoFile: File? = null
-                    try {
-                        photoFile = createImageFile()
-                        takePictureIntent.putExtra("PhotoPath", cameraPhotoPath)
-                    } catch (ex: IOException) {
-                        // Error occurred while creating the File
+                // Check Camera Permissions before opening picker
+                val hasCameraPerm = ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                
+                var takePictureIntent: Intent? = null
+                if (hasCameraPerm) {
+                    takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                    if (takePictureIntent.resolveActivity(packageManager) != null) {
+                        var photoFile: File? = null
+                        try {
+                            photoFile = createImageFile()
+                            takePictureIntent.putExtra("PhotoPath", cameraPhotoPath)
+                        } catch (ex: IOException) {
+                            // Error occurred while creating the File
+                        }
+                        if (photoFile != null) {
+                            cameraPhotoPath = "file:" + photoFile.absolutePath
+                            val photoURI = FileProvider.getUriForFile(
+                                this@MainActivity,
+                                "${applicationContext.packageName}.provider",
+                                photoFile
+                            )
+                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                        } else {
+                            takePictureIntent = null
+                        }
                     }
-                    if (photoFile != null) {
-                        cameraPhotoPath = "file:" + photoFile.absolutePath
-                        val photoURI = FileProvider.getUriForFile(
-                            this@MainActivity,
-                            "${applicationContext.packageName}.provider",
-                            photoFile
-                        )
-                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                    } else {
-                        takePictureIntent = null
-                    }
+                } else {
+                    // Trigger runtime permissions dynamically if previously denied
+                    ActivityCompat.requestPermissions(this@MainActivity, arrayOf(Manifest.permission.CAMERA), 101)
+                    // We don't block the file picker entirely (they might just want gallery)
+                    // but we won't present the camera option this time until permission is granted.
                 }
 
                 val contentSelectionIntent = Intent(Intent.ACTION_GET_CONTENT)

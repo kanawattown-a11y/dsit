@@ -284,9 +284,9 @@ export default function DistributorScanPage() {
                                                     style={{ width: 18, height: 18 }}
                                                 />
                                                 <div style={{ flex: 1 }}>
-                                                    <div className="flex items-center justify-between mb-2">
-                                                        <span className="font-semibold">{alloc.categoryName}</span>
-                                                        <span className={`badge ${pct > 50 ? "badge-success" : pct > 20 ? "badge-warning" : "badge-danger"}`}>
+                                                    <div className="flex items-center justify-between mb-2" style={{ flexWrap: "wrap", gap: "var(--space-2)" }}>
+                                                        <span className="font-semibold" style={{ fontSize: "var(--font-size-sm)" }}>{alloc.categoryName}</span>
+                                                        <span className={`badge ${pct > 50 ? "badge-success" : pct > 20 ? "badge-warning" : "badge-danger"}`} style={{ fontSize: "var(--font-size-xs)" }}>
                                                             {alloc.remainingQuota} / {alloc.totalQuota} {unit}
                                                         </span>
                                                     </div>
@@ -320,13 +320,13 @@ export default function DistributorScanPage() {
                                         placeholder="أدخل الكمية" dir="ltr" style={{ textAlign: "right" }}
                                     />
                                 </div>
-                                <div style={{ display: "flex", gap: "var(--space-3)" }}>
-                                    <button className="btn btn-primary btn-lg" style={{ flex: 1 }}
+                                <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-3)" }}>
+                                    <button className="btn btn-primary" style={{ flex: "1 1 auto", minWidth: "120px", padding: "var(--space-3)" }}
                                         disabled={!selectedAllocation || !quantity || processing || !myCenter}
                                         onClick={() => setShowConfirm(true)}>
                                         {processing ? "جاري المعالجة..." : "تأكيد الخصم"}
                                     </button>
-                                    <button className="btn btn-ghost btn-lg" onClick={resetScan}>
+                                    <button className="btn btn-ghost" style={{ flex: "1 1 auto", minWidth: "120px", padding: "var(--space-3)" }} onClick={resetScan}>
                                         مسح جديد
                                     </button>
                                 </div>
