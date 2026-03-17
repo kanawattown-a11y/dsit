@@ -4,8 +4,13 @@ import crypto from "crypto";
 import fs from "fs/promises";
 import path from "path";
 
-// If AWS keys are not set or are just the "placeholder", fallback to local uploads for testing
-const useLocalFallback = !process.env.AWS_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID === "placeholder";
+// If AWS keys are not set, are empty strings, or are just the "placeholder", fallback to local uploads for testing
+const useLocalFallback =
+    !process.env.AWS_ACCESS_KEY_ID ||
+    process.env.AWS_ACCESS_KEY_ID === "placeholder" ||
+    process.env.AWS_ACCESS_KEY_ID.trim() === "";
+
+const BUCKET = process.env.AWS_S3_BUCKET || process.env.AWS_S3_BUCKET_NAME || "dsit-suwayda-storage";
 
 const s3Client = useLocalFallback ? null : new S3Client({
     region: process.env.AWS_REGION || "me-south-1",
@@ -14,8 +19,6 @@ const s3Client = useLocalFallback ? null : new S3Client({
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
     },
 });
-
-const BUCKET = process.env.AWS_S3_BUCKET || "dsit-tamween-files";
 
 /**
  * Upload a file to S3 (or locally if S3 is not configured)
@@ -32,10 +35,10 @@ export async function uploadToS3(
         console.warn("[Upload] Using local filesystem fallback because S3 keys are not configured.");
         const uploadDir = path.join(process.cwd(), "public", "local-uploads", folder);
         await fs.mkdir(uploadDir, { recursive: true });
-        
+
         const filePath = path.join(uploadDir, fileName);
         await fs.writeFile(filePath, file);
-        
+
         // Return public relative path
         return `/local-uploads/${folder}/${fileName}`;
     }
