@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { AS_SUWAYDA_REGIONS } from "@/lib/constants";
+import SearchableSelect from "@/components/SearchableSelect";
 import WebcamCapture from "@/components/WebcamCapture";
 
 export default function RegisterPage() {
@@ -223,18 +224,12 @@ export default function RegisterPage() {
 
                     <div className="form-group">
                         <label className="form-label" htmlFor="region">المنطقة</label>
-                        <select
-                            id="region"
-                            name="region"
-                            className="form-select"
-                            value={formData.region}
-                            onChange={handleChange}
-                        >
-                            <option value="">اختر المنطقة (اختياري)</option>
-                            {AS_SUWAYDA_REGIONS.map(reg => (
-                                <option key={reg} value={reg}>{reg}</option>
-                            ))}
-                        </select>
+                        <SearchableSelect 
+                            value={formData.region || ""} 
+                            onChange={(val) => setFormData(p => ({ ...p, region: val }))} 
+                            options={AS_SUWAYDA_REGIONS} 
+                            placeholder="ابحث واختر مدينة / قرية (اختياري)..." 
+                        />
                     </div>
 
                     <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>

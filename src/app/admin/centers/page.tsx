@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { AS_SUWAYDA_REGIONS } from "@/lib/constants";
+import SearchableSelect from "@/components/SearchableSelect";
 
 type UserBasic = { id: string; fullName: string; nationalId: string };
 
@@ -220,10 +221,13 @@ export default function AdminCentersPage() {
                                 <div className="grid-2">
                                     <div className="form-group">
                                         <label className="form-label">المنطقة</label>
-                                        <select className="form-select" required value={formData.region} onChange={e => setFormData({ ...formData, region: e.target.value })}>
-                                            <option value="">-- اختر المنطقة --</option>
-                                            {AS_SUWAYDA_REGIONS.map(reg => <option key={reg} value={reg}>{reg}</option>)}
-                                        </select>
+                                        <SearchableSelect 
+                                            value={formData.region} 
+                                            onChange={val => setFormData({ ...formData, region: val })} 
+                                            options={AS_SUWAYDA_REGIONS} 
+                                            placeholder="-- اختر أو ابحث عن المنطقة --" 
+                                            required 
+                                        />
                                     </div>
                                     <div className="form-group">
                                         <label className="form-label">رقم الهاتف</label>
