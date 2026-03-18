@@ -200,6 +200,7 @@ ol {
 
 .main-content {
   flex: 1;
+  min-width: 0;
   margin-right: var(--sidebar-width);
   transition: margin var(--transition-base);
 }
@@ -240,6 +241,7 @@ ol {
   padding: var(--space-6);
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-base);
+  min-width: 0;
 }
 
 .card:hover {
