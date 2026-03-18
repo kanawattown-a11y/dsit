@@ -32,7 +32,7 @@ export default function SearchableSelect({ value, onChange, options, placeholder
         <div ref={ref} style={{ position: "relative", width: "100%" }}>
             <div 
                 className="form-input" 
-                style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer", background: "var(--bg-card)" }}
+                style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer", backgroundColor: "white" }}
                 onClick={() => setIsOpen(!isOpen)}
             >
                 <span style={{ color: value ? "inherit" : "var(--gray-500)" }}>{value || placeholder}</span>
@@ -45,11 +45,11 @@ export default function SearchableSelect({ value, onChange, options, placeholder
             {isOpen && (
                 <div style={{
                     position: "absolute", top: "100%", left: 0, right: 0, marginTop: "4px",
-                    background: "var(--bg-card)", border: "1px solid var(--border-color)", 
+                    backgroundColor: "white", border: "1px solid var(--border-color)", 
                     borderRadius: "var(--radius-md)", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", 
                     zIndex: 50, maxHeight: "300px", overflowY: "auto", display: "flex", flexDirection: "column"
                 }}>
-                    <div style={{ padding: "var(--space-2)", borderBottom: "1px solid var(--border-color)", position: "sticky", top: 0, background: "var(--bg-card)", zIndex: 2 }}>
+                    <div style={{ padding: "var(--space-2)", borderBottom: "1px solid var(--border-color)", position: "sticky", top: 0, backgroundColor: "white", zIndex: 2 }}>
                         <div style={{ position: "relative" }}>
                             <Search size={16} style={{ position: "absolute", right: "8px", top: "50%", transform: "translateY(-50%)", color: "var(--gray-400)" }} />
                             <input 
