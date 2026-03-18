@@ -45,7 +45,7 @@ export default function LandingPage() {
                 </p>
 
                 <div style={{ display: "flex", gap: "var(--space-4)", flexWrap: "wrap", justifyContent: "center" }}>
-                    <Link href="/auth/register" className="btn btn-primary btn-lg" style={{ borderRadius: "50px", padding: "16px 40px", fontSize: "1.1rem", fontWeight: 700, boxShadow: "0 8px 20px rgba(37, 99, 235, 0.3)", backgroundImage: "linear-gradient(to right, var(--primary), #4f46e5)", transition: "transform 0.2s, box-shadow 0.2s" }}>
+                    <Link href="/auth/register" className="btn btn-primary btn-lg" style={{ borderRadius: "50px", padding: "16px 40px", fontSize: "1.1rem", fontWeight: 700, boxShadow: "0 8px 20px rgba(37, 99, 235, 0.3)", backgroundImage: "var(--primary)", transition: "transform 0.2s, box-shadow 0.2s" }}>
                         ابدأ الآن وانشئ حسابك
                     </Link>
                     <Link href="/auth/login" className="btn btn-outline btn-lg" style={{ borderRadius: "50px", padding: "16px 40px", fontSize: "1.1rem", fontWeight: 700, background: "white", transition: "transform 0.2s" }}>

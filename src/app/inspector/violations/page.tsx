@@ -161,17 +161,35 @@ function ViolationsContent() {
             )}
 
             {isModalOpen && (
-                <div className="modal-backdrop">
-                    <div className="modal-content" style={{ maxWidth: "500px" }}>
-                        <div className="modal-header">
-                            <h2 style={{ fontSize: "var(--font-size-xl)", fontWeight: 700 }}>تحرير ضبط تمويني</h2>
-                            <button className="btn btn-ghost btn-icon" onClick={() => { setIsModalOpen(false); router.replace("/inspector/violations"); }}>×</button>
+                <div className="modal-backdrop" style={{ backdropFilter: "blur(5px)", backgroundColor: "rgba(17, 30, 56, 0.7)" }}>
+                    <div className="card modal-content" style={{ width: "90%", maxWidth: "550px", margin: "var(--space-4)", padding: "var(--space-6)" }}>
+                        <div className="modal-header" style={{ marginBottom: "var(--space-6)", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
+                                <div className="stat-icon danger" style={{ width: "48px", height: "48px", borderRadius: "12px" }}>
+                                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ width: "24px", height: "24px" }}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 style={{ fontSize: "var(--font-size-xl)", fontWeight: 800, color: "var(--danger)" }}>تحرير ضبط تمويني</h2>
+                                    <p style={{ fontSize: "var(--font-size-xs)", color: "var(--gray-500)", marginTop: "var(--space-1)" }}>تسجيل مخالفة رسمية بحق مركز توزيع</p>
+                                </div>
+                            </div>
+                            <button type="button" className="btn btn-ghost btn-icon" onClick={() => { setIsModalOpen(false); router.replace("/inspector/violations"); }}>×</button>
                         </div>
-                        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)", marginTop: "var(--space-4)" }}>
+
+                        <div className="alert alert-danger" style={{ marginBottom: "var(--space-6)", padding: "var(--space-3) var(--space-4)" }}>
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ width: "20px", height: "20px", flexShrink: 0 }}>
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span style={{ fontSize: "var(--font-size-sm)", lineHeight: 1.5 }}>تنبيه: سيتم تثبيت هذا الضبط أصولاً وتطبيق حجز البضائع أو الغرامات القانونية فوراً.</span>
+                        </div>
+
+                        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
                             <div className="form-group">
-                                <label className="form-label">المركز المخالف *</label>
+                                <label className="form-label" style={{ fontWeight: 600 }}>المركز المخالف *</label>
                                 <select 
-                                    className="form-select" 
+                                    className="form-input" 
                                     required 
                                     value={formData.centerId} 
                                     onChange={(e) => setFormData({...formData, centerId: e.target.value})}
@@ -182,19 +200,20 @@ function ViolationsContent() {
                             </div>
                             
                             <div className="form-group">
-                                <label className="form-label">تفاصيل الضبط أو الشكوى *</label>
+                                <label className="form-label" style={{ fontWeight: 600 }}>تفاصيل الضبط أو الشكوى الدقيقة *</label>
                                 <textarea 
                                     className="form-input" 
                                     required 
                                     rows={4} 
                                     placeholder="اكتب تفاصيل المخالفة (مثال: تلاعب بالوزن، بيع خارج المنصة، جودة سيئة...)"
                                     value={formData.details}
+                                    style={{ resize: "none" }}
                                     onChange={(e) => setFormData({...formData, details: e.target.value})}
                                 />
                             </div>
 
                             <div className="form-group">
-                                <label className="form-label">الغرامة المقترحة أو المسجلة (ل.س) - اختياري</label>
+                                <label className="form-label" style={{ fontWeight: 600 }}>الغرامة المقترحة أو المسجلة (ل.س) - اختياري</label>
                                 <input 
                                     type="number" 
                                     className="form-input" 
@@ -204,10 +223,12 @@ function ViolationsContent() {
                                 />
                             </div>
 
-                            <div style={{ display: "flex", gap: "var(--space-3)", marginTop: "var(--space-2)" }}>
-                                <button type="button" className="btn btn-outline" onClick={() => { setIsModalOpen(false); router.replace("/inspector/violations"); }} style={{ flex: 1 }}>إلغاء</button>
-                                <button type="submit" className="btn btn-primary" disabled={isSubmitting} style={{ flex: 1 }}>
-                                    {isSubmitting ? "جاري الحفظ..." : "تسجيل وضبط وتثبيت"}
+                            <div className="grid-2" style={{ marginTop: "var(--space-2)" }}>
+                                <button type="button" className="btn btn-outline" onClick={() => { setIsModalOpen(false); router.replace("/inspector/violations"); }}>
+                                    تراجع وإلغاء
+                                </button>
+                                <button type="submit" className="btn btn-danger" disabled={isSubmitting}>
+                                    {isSubmitting ? "جاري تثبيت الضبط..." : "تسجيل وتثبيت الضبط"}
                                 </button>
                             </div>
                         </form>

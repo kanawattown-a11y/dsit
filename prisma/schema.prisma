@@ -78,17 +78,19 @@ enum ViolationStatus {
   DISMISSED
 }
 
-enum InventoryCategory {
-  FLOUR
-  YEAST
-  GAS_CYLINDER
-  DIESEL
+enum DailyConsumptionStatus {
+  PENDING
+  MATCHED
+  DISCREPANCY
+  RESOLVED
 }
 
 enum InventoryTransactionType {
   IN
   OUT
   ADJUSTMENT
+  CONSUMPTION
+}
 }
 
 
@@ -485,19 +487,37 @@ model SystemSetting {
   @@index([key])
 }
 
+// ─── Materials (Dynamic Types for Inventory) ──────────────────
+
+model Material {
+  id          String             @id @default(cuid())
+  name        String             @unique
+  unit        String             // e.g. kg, liter, piece
+  isActive    Boolean            @default(true)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  inventories            CenterInventory[]
+  transactions           InventoryTransaction[]
+  dailyConsumptionReports DailyConsumptionReport[]
+
+  @@index([isActive])
+}
+
 // ─── Inventory Management ─────────────────────────────────────
 
 model CenterInventory {
   id          String             @id @default(cuid())
   centerId    String
   center      DistributionCenter @relation("CenterInventory", fields: [centerId], references: [id])
-  category    InventoryCategory
+  materialId  String
+  material    Material           @relation(fields: [materialId], references: [id])
   quantity    Float              @default(0) // total available stock
   lastUpdated DateTime           @updatedAt
 
   transactions InventoryTransaction[]
 
-  @@unique([centerId, category]) // one record per category per center
+  @@unique([centerId, materialId]) // one record per material per center
   @@index([centerId])
 }
 
@@ -505,6 +525,8 @@ model InventoryTransaction {
   id              String             @id @default(cuid())
   inventoryId     String
   inventory       CenterInventory    @relation(fields: [inventoryId], references: [id])
+  materialId      String
+  material        Material           @relation(fields: [materialId], references: [id])
   type            InventoryTransactionType
   amount          Float
   notes           String?
@@ -513,7 +535,32 @@ model InventoryTransaction {
   createdAt       DateTime           @default(now())
 
   @@index([inventoryId])
+  @@index([materialId])
   @@index([processedById])
   @@index([createdAt])
+}
+
+// ─── Daily Consumption Reports (Dual-Reporting Engine) ───────────
+
+model DailyConsumptionReport {
+  id                String             @id @default(cuid())
+  centerId          String
+  center            DistributionCenter @relation(fields: [centerId], references: [id])
+  materialId        String
+  material          Material           @relation(fields: [materialId], references: [id])
+  reportDate        DateTime           @db.Date // Stored as just the date to enforce uniqueness per day
+  distributorAmount Float
+  inspectorAmount   Float?
+  distributorNotes  String?
+  inspectorNotes    String?
+  status            DailyConsumptionStatus @default(PENDING)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@unique([centerId, materialId, reportDate]) // Only one report per material per center per day
+  @@index([centerId])
+  @@index([materialId])
+  @@index([reportDate])
+  @@index([status])
 }
 

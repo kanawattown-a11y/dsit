@@ -19,7 +19,11 @@ export async function GET(req: NextRequest) {
                 ...(search ? { name: { contains: search, mode: "insensitive" } } : {})
             },
             include: {
-                inventories: true
+                inventories: {
+                    include: {
+                        material: true
+                    }
+                }
             },
             orderBy: { name: "asc" }
         });
@@ -38,11 +42,11 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
         }
 
-        const data = await req.json(); // { centerId, category, quantity, type, notes }
-        const { centerId, category, quantity, type, notes } = data;
+        const data = await req.json();
+        const { centerId, materialId, quantity, type, notes } = data;
         const amount = parseFloat(quantity);
 
-        if (!centerId || !category || isNaN(amount) || amount <= 0) {
+        if (!centerId || !materialId || isNaN(amount) || amount <= 0) {
             return NextResponse.json({ error: "الرجاء تعبئة كافة الحقول بشكل صحيح" }, { status: 400 });
         }
 
@@ -52,7 +56,7 @@ export async function POST(req: NextRequest) {
         await prisma.$transaction(async (tx) => {
             // Upsert Center Inventory
             const inventory = await tx.centerInventory.upsert({
-                where: { centerId_category: { centerId, category } },
+                where: { centerId_materialId: { centerId, materialId } },
                 update: {
                     quantity: {
                         [type === "IN" ? "increment" : "decrement"]: amount
@@ -60,7 +64,7 @@ export async function POST(req: NextRequest) {
                 },
                 create: {
                     centerId,
-                    category,
+                    materialId,
                     quantity: type === "IN" ? amount : 0
                 }
             });
@@ -69,6 +73,7 @@ export async function POST(req: NextRequest) {
             await tx.inventoryTransaction.create({
                 data: {
                     inventoryId: inventory.id,
+                    materialId: materialId,
                     type: type || "IN",
                     amount: amount,
                     notes: notes || null,
