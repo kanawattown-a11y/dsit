@@ -231,7 +231,7 @@ export default function AdminReportsPage() {
                                 <div className="form-group">
                                     <label className="form-label">رد الإدارة (يصل للمواطن)</label>
                                     <textarea 
-                                        className="input-field" 
+                                        className="form-input" 
                                         rows={3} 
                                         placeholder="اكتب ردك ليظهر في صندوق شكاوى المواطن..."
                                         value={formData.adminReply}
@@ -245,7 +245,7 @@ export default function AdminReportsPage() {
                                     <label className="form-label">الغرامة المادية المعتمدة (ل.س)</label>
                                     <input 
                                         type="number" 
-                                        className="input-field" 
+                                        className="form-input" 
                                         placeholder="أدخل مبلغ المخالفة النهائي لتثبيته للمحاسبة..."
                                         value={formData.fineAmount}
                                         onChange={(e) => setFormData({...formData, fineAmount: e.target.value})}

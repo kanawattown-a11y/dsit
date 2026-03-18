@@ -27805,8 +27805,10 @@ org.dsit.suwayda.R$drawable:
     public static int ic_launcher_background
     private void <init>()
 org.dsit.suwayda.R$id:
+    public static int logo
     private void <init>()
 org.dsit.suwayda.R$layout:
+    public static int activity_splash
     private void <init>()
 org.dsit.suwayda.R$mipmap
 org.dsit.suwayda.R$string
@@ -27814,6 +27816,7 @@ org.dsit.suwayda.R$style
 org.dsit.suwayda.R$xml
 org.dsit.suwayda.R
 org.dsit.suwayda.databinding.ActivityMainBinding
+org.dsit.suwayda.databinding.ActivitySplashBinding
 org.intellij.lang.annotations.Flow
 org.intellij.lang.annotations.Identifier
 org.intellij.lang.annotations.JdkConstants$AdjustableOrientation
@@ -27850,8 +27853,6 @@ androidx.activity.BackEventCompat$Companion
 androidx.activity.BackEventCompat:
     public static final com.google.android.material.shape.EdgeTreatment Companion
     static void <clinit>()
-androidx.activity.ComponentActivity$$InternalSyntheticLambda$1$f7979a7b7286ed37b664e8d41a94ec65e3d54774ca037fa175dd9df0faa673c4$0:
-    private final void run$androidx$activity$FullyDrawnReporter$$InternalSyntheticLambda$2$33b949e97aea211bd722c440cfaeae6184ded166ab41fbc7f3e7a0eed3c61b5f$0()
 androidx.activity.ComponentActivity$1$2
 androidx.activity.ComponentActivity$5:
     public static void cancel()
@@ -38583,6 +38584,7 @@ kotlinx.coroutines.Job
 kotlinx.coroutines.JobKt
 kotlinx.coroutines.JobKt__JobKt
 org.dsit.suwayda.MainActivity$$InternalSyntheticLambda$1$47063be78aa240b37932913eab90d13119ee22434daa964c13fcda19c465fe04$0
+org.dsit.suwayda.MainActivity$setupWebView$2$$InternalSyntheticLambda$2$7dc5582224c3c9665588c0a8f30e11948a9d15d09753e394eb36feb1fb7c0622$0
 org.dsit.suwayda.MainActivity:
     public static java.io.File createImageFile()
     public static void requestPermissionsIfNeeded()

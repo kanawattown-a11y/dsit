@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.ProgressBar;
+import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -21,15 +21,19 @@ public final class ActivityMainBinding implements ViewBinding {
   private final ConstraintLayout rootView;
 
   @NonNull
-  public final ProgressBar progressBar;
+  public final ImageView logo;
+
+  @NonNull
+  public final ConstraintLayout splashOverlay;
 
   @NonNull
   public final WebView webView;
 
-  private ActivityMainBinding(@NonNull ConstraintLayout rootView, @NonNull ProgressBar progressBar,
-      @NonNull WebView webView) {
+  private ActivityMainBinding(@NonNull ConstraintLayout rootView, @NonNull ImageView logo,
+      @NonNull ConstraintLayout splashOverlay, @NonNull WebView webView) {
     this.rootView = rootView;
-    this.progressBar = progressBar;
+    this.logo = logo;
+    this.splashOverlay = splashOverlay;
     this.webView = webView;
   }
 
@@ -60,9 +64,15 @@ public final class ActivityMainBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.progressBar;
-      ProgressBar progressBar = ViewBindings.findChildViewById(rootView, id);
-      if (progressBar == null) {
+      id = R.id.logo;
+      ImageView logo = ViewBindings.findChildViewById(rootView, id);
+      if (logo == null) {
+        break missingId;
+      }
+
+      id = R.id.splashOverlay;
+      ConstraintLayout splashOverlay = ViewBindings.findChildViewById(rootView, id);
+      if (splashOverlay == null) {
         break missingId;
       }
 
@@ -72,7 +82,7 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ActivityMainBinding((ConstraintLayout) rootView, progressBar, webView);
+      return new ActivityMainBinding((ConstraintLayout) rootView, logo, splashOverlay, webView);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

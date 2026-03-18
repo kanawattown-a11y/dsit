@@ -122,7 +122,7 @@ export default function AdminCentersPage() {
 
     return (
         <div className="page-container">
-            <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: "var(--space-4)" }}>
                 <div>
                     <h1 className="page-title">مراكز التوزيع</h1>
                     <p className="page-subtitle">إدارة الأفران، محطات الوقود، ومراكز السورية للتجارة</p>

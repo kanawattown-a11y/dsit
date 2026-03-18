@@ -65,7 +65,7 @@ export default function InspectorCentersPage() {
                 <form onSubmit={handleSearch} style={{ display: "flex", gap: "var(--space-4)" }}>
                     <input
                         type="text"
-                        className="input-field"
+                        className="form-input"
                         placeholder="ابحث عن مركز بالاسم أو المنطقة..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}

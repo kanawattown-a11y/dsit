@@ -108,7 +108,7 @@ export default function AdminInventoryPage() {
             </div>
 
             <div className="card mb-6">
-                <form onSubmit={handleSearch} style={{ display: "flex", gap: "var(--space-4)" }}>
+                <form onSubmit={handleSearch} style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-4)" }}>
                     <input
                         type="text"
                         className="input-field"
@@ -223,7 +223,7 @@ export default function AdminInventoryPage() {
                                 <label className="form-label">الكمية *</label>
                                 <input 
                                     type="number" 
-                                    className="input-field" 
+                                    className="form-input" 
                                     required 
                                     min="0.1"
                                     step="0.1"
@@ -237,7 +237,7 @@ export default function AdminInventoryPage() {
                                 <label className="form-label">ملاحظات والتبرير (سجل إلزامي للمحاسبة)</label>
                                 <input 
                                     type="text" 
-                                    className="input-field" 
+                                    className="form-input" 
                                     placeholder="مثال: مخصصات شهر 2 قادمة من سادكوب..."
                                     required
                                     value={formData.notes}

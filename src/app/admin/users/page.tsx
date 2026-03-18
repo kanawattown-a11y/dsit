@@ -410,7 +410,7 @@ function AdminUsersContent() {
                             </button>
                         </div>
                         <div className="modal-body">
-                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
+                            <div className="grid-2">
                                 <div>
                                     <h4 style={{ marginBottom: "var(--space-2)", fontSize: "0.9rem", color: "var(--gray-600)" }}>الوجه الأمامي</h4>
                                     {showIdModal.idPhotoFront ? (

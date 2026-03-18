@@ -85,35 +85,34 @@ export default function AdminSettingsPage() {
             {loading ? (
                 <div style={{ textAlign: "center", padding: "var(--space-12)" }}>جاري تحميل الإعدادات...</div>
             ) : (
-                <div className="card">
-                    <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: "var(--space-6)" }}>
-                        <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "var(--space-4)" }}>
-                            {DEFAULT_KEYS.map((k) => (
-                                <div key={k.key} className="form-group" style={{ background: "var(--gray-50)", padding: "var(--space-4)", borderRadius: "var(--radius-md)", border: "1px solid var(--gray-200)" }}>
-                                    <label className="form-label" style={{ fontWeight: 600, color: "var(--navy-800)" }}>
-                                        {k.label}
-                                    </label>
-                                    <input
-                                        type={k.defaultValue === "true" || k.defaultValue === "false" ? "text" : "number"}
-                                        className="input-field"
-                                        value={settings[k.key] || ""}
-                                        onChange={(e) => handleChange(k.key, e.target.value)}
-                                        style={{ background: "white", marginTop: "var(--space-2)" }}
-                                    />
-                                    <small style={{ color: "var(--gray-500)", display: "block", marginTop: "var(--space-1)", fontSize: "0.80rem" }}>
-                                        مفتاح القاعدة: <code style={{ color: "var(--primary-600)", background: "transparent", padding: 0 }}>{k.key}</code>
-                                    </small>
+                <form onSubmit={handleSave}>
+                    <div className="grid-2">
+                        {DEFAULT_KEYS.map((k) => (
+                            <div key={k.key} className="card animate-fade-in" style={{ padding: "var(--space-5)", display: "flex", flexDirection: "column" }}>
+                                <label className="form-label" style={{ fontWeight: 600, fontSize: "1.05rem", color: "var(--navy-800)", marginBottom: "var(--space-3)" }}>
+                                    {k.label}
+                                </label>
+                                <input
+                                    type={k.defaultValue === "true" || k.defaultValue === "false" ? "text" : "number"}
+                                    className="form-input"
+                                    value={settings[k.key] || ""}
+                                    onChange={(e) => handleChange(k.key, e.target.value)}
+                                    dir="ltr"
+                                    style={{ textAlign: "right", marginBottom: "var(--space-3)" }}
+                                />
+                                <div style={{ fontSize: "var(--font-size-sm)", color: "var(--gray-500)", marginTop: "auto" }}>
+                                    المفتاح البرمجي: <code style={{ color: "var(--primary-700)", background: "var(--primary-50)", padding: "2px 6px", borderRadius: "4px" }}>{k.key}</code>
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+                        ))}
+                    </div>
 
-                        <div style={{ borderTop: "1px solid var(--gray-200)", paddingTop: "var(--space-4)", display: "flex", justifyContent: "flex-end" }}>
-                            <button type="submit" className="btn btn-primary" disabled={isSaving} style={{ minWidth: "200px" }}>
-                                {isSaving ? "جاري الحفظ..." : "حفظ التغييرات ونشرها"}
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                    <div className="card mt-6" style={{ display: "flex", justifyContent: "flex-end", padding: "var(--space-4)" }}>
+                        <button type="submit" className="btn btn-primary btn-lg" disabled={isSaving} style={{ minWidth: "250px" }}>
+                            {isSaving ? "جاري الحفظ..." : "حفظ التغييرات ونشرها"}
+                        </button>
+                    </div>
+                </form>
             )}
         </main>
     );
