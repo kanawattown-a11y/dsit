@@ -9,6 +9,7 @@ const inspectorNavItems = [
     { href: "/inspector", label: "الرئيسية", icon: "home" },
     { href: "/inspector/centers", label: "المراكز الرقابية", icon: "building" },
     { href: "/inspector/violations", label: "تنظيم الضبوط", icon: "shield" },
+    { href: "/inspector/verification", label: "التصديق والمطابقة", icon: "shield" },
     { href: "/inspector/reports", label: "التقارير المرفوعة", icon: "report" },
 ];
 

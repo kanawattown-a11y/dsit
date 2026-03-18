@@ -28,12 +28,14 @@ const adminNavItems = [
             { href: "/admin/periods", label: "دورات التوزيع", icon: "calendar" },
             { href: "/admin/centers", label: "مراكز التوزيع", icon: "building" },
             { href: "/admin/inventory", label: "إدارة المخزون", icon: "database" },
+            { href: "/admin/materials", label: "المواد الأولية", icon: "package" },
             { href: "/admin/transactions", label: "المعاملات", icon: "receipt" },
         ],
     },
     {
         section: "الأدوات والرقابة",
         items: [
+            { href: "/admin/consumption-radar", label: "رادار المطابقة وكشف التلاعب", icon: "shield" },
             { href: "/admin/notifications", label: "الإشعارات", icon: "bell" },
             { href: "/admin/reports", label: "الشكاوى والضبوط", icon: "chart" },
             { href: "/admin/audit-log", label: "سجل التدقيق", icon: "shield" },

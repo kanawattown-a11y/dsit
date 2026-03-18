@@ -8,6 +8,7 @@ import React, { useState } from "react";
 const distributorNavItems = [
     { href: "/distributor", label: "الرئيسية", icon: "home" },
     { href: "/distributor/scan", label: "مسح QR", icon: "scan" },
+    { href: "/distributor/inventory", label: "مخزون واستهلاك المركز", icon: "receipt" },
     { href: "/distributor/transactions", label: "المعاملات", icon: "receipt" },
 ];
 
