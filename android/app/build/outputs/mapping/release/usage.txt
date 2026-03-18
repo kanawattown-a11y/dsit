@@ -27805,7 +27805,6 @@ org.dsit.suwayda.R$drawable:
     public static int ic_launcher_background
     private void <init>()
 org.dsit.suwayda.R$id:
-    public static int logo
     private void <init>()
 org.dsit.suwayda.R$layout:
     private void <init>()
@@ -27815,7 +27814,6 @@ org.dsit.suwayda.R$style
 org.dsit.suwayda.R$xml
 org.dsit.suwayda.R
 org.dsit.suwayda.databinding.ActivityMainBinding
-org.dsit.suwayda.databinding.ActivitySplashBinding
 org.intellij.lang.annotations.Flow
 org.intellij.lang.annotations.Identifier
 org.intellij.lang.annotations.JdkConstants$AdjustableOrientation
@@ -38597,4 +38595,3 @@ org.dsit.suwayda.MyFirebaseMessagingService:
 org.dsit.suwayda.R$drawable
 org.dsit.suwayda.R$id
 org.dsit.suwayda.R$layout
-org.dsit.suwayda.SplashActivity$$InternalSyntheticLambda$1$0d5d3138af44a7bcf9dd51740cda987a09d3d56c0b506bb59b08d490aa9ea8af$0

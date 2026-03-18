@@ -143,7 +143,7 @@ export default function AdminAllocationsPage() {
                                 </span>
                             </div>
 
-                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-3)", marginBottom: "var(--space-4)" }}>
+                            <div className="grid-2" style={{ gap: "var(--space-3)", marginBottom: "var(--space-4)" }}>
                                 <div>
                                     <div className="text-xs text-gray-400">النوع</div>
                                     <div className="text-sm font-semibold">{typeLabels[cat.type]}</div>
@@ -195,7 +195,7 @@ export default function AdminAllocationsPage() {
                         </div>
                         <form onSubmit={handleSubmit}>
                             <div className="modal-body">
-                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
+                                <div className="grid-2">
                                     <div className="form-group">
                                         <label className="form-label">الاسم (إنجليزي)</label>
                                         <input className="form-input" value={formData.name} onChange={(e) => setFormData(p => ({ ...p, name: e.target.value }))} required placeholder="bread" dir="ltr" />
@@ -205,7 +205,7 @@ export default function AdminAllocationsPage() {
                                         <input className="form-input" value={formData.nameAr} onChange={(e) => setFormData(p => ({ ...p, nameAr: e.target.value }))} required placeholder="خبز" />
                                     </div>
                                 </div>
-                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
+                                <div className="grid-2">
                                     <div className="form-group">
                                         <label className="form-label">النوع</label>
                                         <select className="form-select" value={formData.type} onChange={(e) => setFormData(p => ({ ...p, type: e.target.value }))}>
@@ -224,7 +224,7 @@ export default function AdminAllocationsPage() {
                                         </select>
                                     </div>
                                 </div>
-                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
+                                <div className="grid-2">
                                     <div className="form-group">
                                         <label className="form-label">الحصة الأساسية</label>
                                         <input className="form-input" type="number" step="0.1" value={formData.baseQuota} onChange={(e) => setFormData(p => ({ ...p, baseQuota: e.target.value }))} required dir="ltr" />

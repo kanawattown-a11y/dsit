@@ -53,7 +53,7 @@ export default function DistributorScanPage() {
 
                 scanner.start(
                     { facingMode: "environment" },
-                    { fps: 10, qrbox: { width: 250, height: 250 } },
+                    { fps: 10, qrbox: window.innerWidth < 400 ? { width: 200, height: 200 } : { width: 250, height: 250 } },
                     (decodedText: string) => {
                         scanner.stop().then(() => setCameraActive(false));
                         handleVerify(decodedText);

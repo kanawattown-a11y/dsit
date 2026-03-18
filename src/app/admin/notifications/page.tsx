@@ -54,7 +54,7 @@ export default function AdminNotificationsPage() {
                 <p className="page-subtitle">إرسال إشعارات يدوية للمستخدمين حسب الدور أو لمستخدم محدد</p>
             </div>
 
-            <div className="grid" style={{ gridTemplateColumns: "2fr 1fr", gap: "var(--space-6)" }}>
+            <div className="grid-2" style={{ gap: "var(--space-6)" }}>
                 {/* Send Form */}
                 <div className="card animate-slide-up">
                     <div className="card-header">

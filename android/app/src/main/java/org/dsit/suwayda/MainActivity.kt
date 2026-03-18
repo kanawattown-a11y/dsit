@@ -27,7 +27,7 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var webView: WebView
-    private lateinit var progressBar: ProgressBar
+    private lateinit var splashOverlay: android.view.View
 
     // For File Chooser / Camera
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         webView = findViewById(R.id.webView)
-        progressBar = findViewById(R.id.progressBar)
+        splashOverlay = findViewById(R.id.splashOverlay)
 
         requestPermissionsIfNeeded()
         setupWebView()
@@ -93,10 +93,14 @@ class MainActivity : AppCompatActivity() {
         webView.webChromeClient = object : WebChromeClient() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 if (newProgress == 100) {
-                    progressBar.visibility = android.view.View.GONE
-                } else {
-                    progressBar.visibility = android.view.View.VISIBLE
-                    progressBar.progress = newProgress
+                    if (splashOverlay.visibility == android.view.View.VISIBLE) {
+                        splashOverlay.animate()
+                            .alpha(0f)
+                            .setDuration(500)
+                            .withEndAction {
+                                splashOverlay.visibility = android.view.View.GONE
+                            }
+                    }
                 }
             }
 
@@ -256,5 +260,15 @@ class MainActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         webView.restoreState(savedInstanceState)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        CookieManager.getInstance().flush()
+    }
+
+    override fun onDestroy() {
+        CookieManager.getInstance().flush()
+        super.onDestroy()
     }
 }

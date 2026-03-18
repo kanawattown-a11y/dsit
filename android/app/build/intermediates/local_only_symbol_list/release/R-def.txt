@@ -7,11 +7,9 @@ color white
 drawable custom_progress
 drawable ic_launcher_background
 drawable logo
-id logo
 id progressBar
 id webView
 layout activity_main
-layout activity_splash
 mipmap ic_launcher
 mipmap ic_launcher_foreground
 mipmap ic_launcher_round

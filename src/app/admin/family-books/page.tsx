@@ -305,18 +305,18 @@ export default function AdminFamilyBooksPage() {
                                         <button type="button" className="btn btn-secondary btn-sm" onClick={addMember}>+ إضافة فرد</button>
                                     </div>
                                     {formData.members.map((member, i) => (
-                                        <div key={i} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr auto", gap: "var(--space-2)", marginBottom: "var(--space-3)", alignItems: "end" }}>
-                                            <div className="form-group" style={{ marginBottom: 0 }}>
+                                        <div key={i} style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)", marginBottom: "var(--space-3)", alignItems: "end" }}>
+                                            <div className="form-group" style={{ flex: "1 1 200px", marginBottom: 0 }}>
                                                 {i === 0 && <label className="form-label">الاسم</label>}
                                                 <input className="form-input" placeholder="الاسم الكامل" value={member.fullName}
                                                     onChange={(e) => { const m = [...formData.members]; m[i].fullName = e.target.value; setFormData(p => ({ ...p, members: m })); }} />
                                             </div>
-                                            <div className="form-group" style={{ marginBottom: 0 }}>
+                                            <div className="form-group" style={{ flex: "1 1 150px", marginBottom: 0 }}>
                                                 {i === 0 && <label className="form-label">الرقم الوطني</label>}
                                                 <input className="form-input" dir="ltr" value={member.nationalId}
                                                     onChange={(e) => { const m = [...formData.members]; m[i].nationalId = e.target.value; setFormData(p => ({ ...p, members: m })); }} />
                                             </div>
-                                            <div className="form-group" style={{ marginBottom: 0 }}>
+                                            <div className="form-group" style={{ flex: "1 1 120px", marginBottom: 0 }}>
                                                 {i === 0 && <label className="form-label">صلة القرابة</label>}
                                                 <select className="form-select" value={member.relationship}
                                                     onChange={(e) => { const m = [...formData.members]; m[i].relationship = e.target.value; setFormData(p => ({ ...p, members: m })); }}>

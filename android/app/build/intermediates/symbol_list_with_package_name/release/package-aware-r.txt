@@ -3336,7 +3336,6 @@ id line3
 id linear
 id listMode
 id list_item
-id logo
 id m3_side_sheet
 id marquee
 id masked
@@ -3712,7 +3711,6 @@ layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
 layout activity_main
-layout activity_splash
 layout custom_dialog
 layout design_bottom_navigation_item
 layout design_bottom_sheet_dialog
