@@ -267,6 +267,7 @@ model DistributionCenter {
   complaints         Complaint[]          @relation("CenterComplaints")
   violations         Violation[]          @relation("CenterViolations")
   inventories        CenterInventory[]    @relation("CenterInventory")
+  dailyReports       DailyConsumptionReport[]
 
   @@index([type])
   @@index([region])
