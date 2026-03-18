@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { AS_SUWAYDA_REGIONS } from "@/lib/constants";
 import WebcamCapture from "@/components/WebcamCapture";
 
 export default function RegisterPage() {
@@ -230,11 +231,9 @@ export default function RegisterPage() {
                             onChange={handleChange}
                         >
                             <option value="">اختر المنطقة (اختياري)</option>
-                            <option value="center">المركز</option>
-                            <option value="north">المنطقة الشمالية</option>
-                            <option value="south">المنطقة الجنوبية</option>
-                            <option value="east">المنطقة الشرقية</option>
-                            <option value="west">المنطقة الغربية</option>
+                            {AS_SUWAYDA_REGIONS.map(reg => (
+                                <option key={reg} value={reg}>{reg}</option>
+                            ))}
                         </select>
                     </div>
 

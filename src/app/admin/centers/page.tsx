@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { AS_SUWAYDA_REGIONS } from "@/lib/constants";
 
 type UserBasic = { id: string; fullName: string; nationalId: string };
 
@@ -219,7 +220,10 @@ export default function AdminCentersPage() {
                                 <div className="grid-2">
                                     <div className="form-group">
                                         <label className="form-label">المنطقة</label>
-                                        <input className="form-input" required value={formData.region} onChange={e => setFormData({ ...formData, region: e.target.value })} />
+                                        <select className="form-select" required value={formData.region} onChange={e => setFormData({ ...formData, region: e.target.value })}>
+                                            <option value="">-- اختر المنطقة --</option>
+                                            {AS_SUWAYDA_REGIONS.map(reg => <option key={reg} value={reg}>{reg}</option>)}
+                                        </select>
                                     </div>
                                     <div className="form-group">
                                         <label className="form-label">رقم الهاتف</label>

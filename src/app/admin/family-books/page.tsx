@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { AS_SUWAYDA_REGIONS } from "@/lib/constants";
 
 interface FamilyBook {
     id: string;
@@ -291,7 +292,10 @@ export default function AdminFamilyBooksPage() {
                                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
                                     <div className="form-group">
                                         <label className="form-label">المنطقة</label>
-                                        <input className="form-input" value={formData.region} onChange={(e) => setFormData(p => ({ ...p, region: e.target.value }))} />
+                                        <select className="form-select" value={formData.region} onChange={(e) => setFormData(p => ({ ...p, region: e.target.value }))}>
+                                            <option value="">-- اختر المنطقة --</option>
+                                            {AS_SUWAYDA_REGIONS.map(reg => <option key={reg} value={reg}>{reg}</option>)}
+                                        </select>
                                     </div>
                                     <div className="form-group">
                                         <label className="form-label">العنوان</label>
