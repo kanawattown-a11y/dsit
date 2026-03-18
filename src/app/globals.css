@@ -1497,6 +1497,57 @@ textarea.form-input {
 }
 
 /* ─── Responsive ─────────────────────────────────────── */
+/* ─── Tables (Responsive Data Containers) ─────────────── */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: var(--space-4);
+  scrollbar-width: thin;
+  scrollbar-color: var(--navy-300) var(--gray-100);
+}
+
+.table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background-color: var(--navy-300);
+  border-radius: var(--radius-md);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+  min-width: 600px;
+}
+
+.table th {
+  background: var(--gray-50);
+  font-weight: 700;
+  color: var(--gray-700);
+  padding: var(--space-3) var(--space-4);
+  text-align: right;
+  border-bottom: 2px solid var(--gray-200);
+}
+
+.table td {
+  padding: var(--space-3) var(--space-4);
+  color: var(--gray-800);
+  border-bottom: 1px solid var(--gray-200);
+  vertical-align: middle;
+}
+
+.table tbody tr:hover {
+  background: var(--gray-50);
+}
+
 @media (max-width: 1200px) {
   .grid-4 {
     grid-template-columns: repeat(2, 1fr);
