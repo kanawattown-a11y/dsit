@@ -1625,10 +1625,17 @@ textarea.form-input {
     border-radius: var(--radius-lg);
   }
 
+  .table {
+    min-width: 100%;
+    white-space: normal;
+    table-layout: fixed;
+    word-break: break-word;
+  }
+
   .table th,
   .table td {
-    padding: var(--space-2) var(--space-3);
-    font-size: var(--font-size-xs);
+    padding: var(--space-1) var(--space-2);
+    font-size: 0.70rem;
   }
 }
 
