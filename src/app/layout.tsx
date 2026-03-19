@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import AuthProvider from "@/components/providers/AuthProvider";
 import { PushNotificationClient } from "@/components/PushNotificationClient";
-import { IBM_Plex_Sans_Arabic } from "next/font/google";
+import { Noto_Kufi_Arabic } from "next/font/google";
 import "./globals.css";
 
-const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
-    subsets: ["arabic", "latin"],
-    weight: ["300", "400", "500", "600", "700"],
-    variable: "--font-ibm-plex",
+const notoKufiArabic = Noto_Kufi_Arabic({
+    subsets: ["arabic"],
+    variable: "--font-noto-kufi",
     display: "swap",
 });
 
@@ -27,7 +26,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="ar" dir="rtl" className={ibmPlexSansArabic.variable}>
+        <html lang="ar" dir="rtl" className={notoKufiArabic.variable}>
             <body>
                 <AuthProvider>
                     <PushNotificationClient />

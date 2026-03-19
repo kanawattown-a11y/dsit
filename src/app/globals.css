@@ -67,7 +67,7 @@
   --gray-900: #111827;
 
   /* Typography */
-  --font-family: var(--font-ibm-plex), sans-serif;
+  --font-family: var(--font-noto-kufi), sans-serif;
   --font-family-mono: 'Inter', monospace;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
