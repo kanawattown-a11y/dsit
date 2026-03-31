@@ -106,7 +106,7 @@ export default function WebcamCapture({ onCapture, onError, label = "التقا�
                     </button>
                 </div>
             ) : isCameraOpen ? (
-                <div style={{ position: "relative", display: "inline-block", width: 250, height: 250, borderRadius: "50%", overflow: "hidden", background: "#000", margin: "0 auto", border: "4px solid var(--gray-200)", boxShadow: "0 8px 24px rgba(0,0,0,0.15)" }}>
+                <div style={{ position: "relative", display: "inline-block", width: 240, height: 320, borderRadius: "120px / 160px", overflow: "hidden", background: "#000", margin: "0 auto", border: "4px solid var(--gray-200)", boxShadow: "0 10px 30px rgba(0,0,0,0.2)" }}>
                     <video
                         ref={videoRef}
                         autoPlay
@@ -116,21 +116,34 @@ export default function WebcamCapture({ onCapture, onError, label = "التقا�
                     />
                     <canvas ref={canvasRef} style={{ display: "none" }} />
                     
-                    {/* Capture Frame Overlay */}
-                    <div style={{ position: "absolute", inset: 0, border: "2px dashed rgba(255,255,255,0.4)", borderRadius: "50%", pointerEvents: "none", margin: "10px" }} />
+                    {/* Professional Oval Guide Overlays */}
+                    <div style={{ 
+                        position: "absolute", inset: 0, 
+                        border: "2px dashed rgba(255,255,255,0.45)", 
+                        borderRadius: "120px / 160px", 
+                        pointerEvents: "none", 
+                        margin: "15px" 
+                    }} />
 
-                    <div style={{ position: "absolute", bottom: 15, left: 0, right: 0, display: "flex", justifyContent: "center", zIndex: 10 }}>
+                    {/* Helpful text for alignment */}
+                    <div style={{ position: "absolute", top: 15, left: 0, right: 0, color: "white", fontSize: "0.75rem", fontWeight: 500, textShadow: "0 1px 4px rgba(0,0,0,0.8)", opacity: 0.9 }}>
+                        ضع وجهك داخل الإطار البيضاوي
+                    </div>
+
+                    <div style={{ position: "absolute", bottom: 20, left: 0, right: 0, display: "flex", justifyContent: "center", zIndex: 10 }}>
                         <button
                             type="button"
                             onClick={handleCapture}
                             style={{ 
-                                width: 56, height: 56, borderRadius: "50%", background: "rgba(255,255,255,0.4)", 
-                                border: "4px solid white", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-                                padding: 0, outline: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.2)"
+                                width: 64, height: 64, borderRadius: "50%", background: "rgba(255,255,255,0.3)", 
+                                border: "5px solid white", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                                padding: 0, outline: "none", boxShadow: "0 4px 15px rgba(0,0,0,0.3)", transition: "transform 0.1s"
                             }}
+                            onMouseDown={(e) => e.currentTarget.style.transform = "scale(0.9)"}
+                            onMouseUp={(e) => e.currentTarget.style.transform = "scale(1)"}
                             title="التقاط"
                         >
-                            <div style={{ width: 40, height: 40, borderRadius: "50%", background: "white" }} />
+                            <div style={{ width: 44, height: 44, borderRadius: "50%", background: "white" }} />
                         </button>
                     </div>
 
@@ -138,12 +151,12 @@ export default function WebcamCapture({ onCapture, onError, label = "التقا�
                         type="button"
                         onClick={stopCamera}
                         style={{ 
-                            position: "absolute", top: 15, right: "50%", transform: "translateX(50%)",
+                            position: "absolute", top: 10, right: 10,
                             background: "rgba(0,0,0,0.5)", color: "white", border: "none", borderRadius: "var(--radius-full)",
-                            padding: "4px 12px", fontSize: "0.80rem", cursor: "pointer", zIndex: 10
+                            width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", zIndex: 10, fontSize: "1.1rem"
                         }}
                     >
-                        إلغاء
+                        ×
                     </button>
                 </div>
             ) : (
